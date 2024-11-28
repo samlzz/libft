@@ -86,7 +86,7 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 $(OBJ_DIR):
 	@$(MD) $(OBJ_DIR)
 
-bonus: $(OBJ_DIR) $(OBJS) $(BONUS_OBJ)
+bonus: $(NAME) $(BONUS_OBJ)
 	@$(AR) $(NAME) $(BONUS_OBJ)
 
 clean:

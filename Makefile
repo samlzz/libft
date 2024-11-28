@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
+#    By: um4s <um4s@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/05 19:03:59 by sliziard          #+#    #+#              #
-#    Updated: 2024/11/14 17:18:20 by sliziard         ###   ########.fr        #
+#    Updated: 2024/11/28 17:42:59 by um4s             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,17 +40,18 @@ BONUS_SRC =	ft_list_bonus.c	\
 
 #* Colors
 
-DEF_COLOR = \033[0;39m
-GRAY = \033[0;90m
-RED = \033[0;91m
-GREEN = \033[0;92m
-YELLOW = \033[0;93m
-BLUE = \033[0;94m
-MAGENTA = \033[0;95m
-CYAN = \033[0;96m
-WHITE = \033[0;97m
-UNDERLINE = \033[4m
+ESC = \033[
+DEF_COLOR = $(ESC)0;39m
+GRAY = $(ESC)0;90m
+RED = $(ESC)0;91m
+GREEN = $(ESC)0;92m
+YELLOW = $(ESC)0;93m
+BLUE = $(ESC)0;94m
+MAGENTA = $(ESC)0;95m
+CYAN = $(ESC)0;96m
+UNDERLINE = $(ESC)4m
 
+COLOR_PRINT = @printf "$(1)$(2)$(DEF_COLOR)\n"
 
 #* Automatic
 
@@ -74,12 +75,12 @@ endif
 all:	$(NAME)
 
 $(NAME): $(OBJ_DIR) $(OBJS)
-	@echo "$(GRAY)"
+	@printf "$(GRAY)"
 	$(LINK_CMD)
-	@echo "$(GREEN)$(UNDERLINE)$(NAME) compiled!$(DEF_COLOR)"
+	$(call COLOR_PRINT,$(GREEN)$(UNDERLINE),$(NAME) compiled !)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	@echo "$(YELLOW)Compiling: $< $(DEF_COLOR)"
+	$(call COLOR_PRINT,$(YELLOW),Compiling: $<)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR):
@@ -92,12 +93,12 @@ clean:
 	@$(RM) $(OBJS)
 	@$(RM) -r $(OBJ_DIR)
 	@$(RM) libft_obj.txt
-	@echo "$(BLUE)$(NAME) object files cleaned!$(DEF_COLOR)"
+	$(call COLOR_PRINT,$(BLUE),$(NAME) object files cleaned!)
 
 fclean:		clean
 	@$(RM) $(NAME)
 
 re:		fclean all
-	@echo "$(GREEN)Cleaned and rebuilt everything for $(NAME)!$(DEF_COLOR)"
+	$(call COLOR_PRINT,$(GREEN),Cleaned and rebuilt everything for $(NAME)!)
 
 .PHONY:		all clean fclean re bonus

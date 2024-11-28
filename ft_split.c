@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#	include <stdlib.h>
-#	include <stdbool.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 static size_t	ft_count_words(const char *s, char separator)
 {

@@ -11,9 +11,10 @@
 /* ************************************************************************** */
 
 #include <unistd.h>
+#include <stdlib.h>
 #include "libft.h"
 
-#	define PUTNBR_BASE 10
+#define PUTNBR_BASE 10
 
 void	ft_putchar_fd(char c, int fd)
 {
@@ -31,10 +32,21 @@ void	ft_putstr_fd(char *s, int fd)
 
 void	ft_putendl_fd(char *s, int fd)
 {
+	char	*endl;
+
 	if (fd < 0)
 		return ;
-	ft_putstr_fd(s, fd);
-	write(fd, "\n", 1);
+	endl = ft_strjoin(s, "\n");
+	if (endl)
+	{
+		ft_putstr_fd(endl, fd);
+		free(endl);
+	}
+	else
+	{
+		ft_putstr_fd(s, fd);
+		write(fd, "\n", 1);
+	}
 }
 
 static void	recurs_putnbr_fd(long n, int fd)

@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#	include <stdbool.h>
-#	include <stdlib.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 char	*ft_strdup(const char *s)
 {

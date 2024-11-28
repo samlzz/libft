@@ -96,6 +96,7 @@ void	ft_lstclear(t_list **lst, void (*del)(void *));
 
 // iter list
 void	ft_lstiter(t_list *lst, void (*f)(void *));
+void	ft_lstiteri(t_list *lst, void (*f)(void *, size_t));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
 #endif

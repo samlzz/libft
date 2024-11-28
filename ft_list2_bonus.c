@@ -42,6 +42,18 @@ void	ft_lstiter(t_list *lst, void (*f)(void *))
 	}
 }
 
+void	ft_lstiteri(t_list *lst, void (*f)(void *, size_t))
+{
+	size_t	i;
+
+	i = 0;
+	while (lst)
+	{
+		f(lst->content, i++);
+		lst = lst->next;
+	}
+}
+
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 {
 	t_list	*mapped;

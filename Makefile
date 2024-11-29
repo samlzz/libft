@@ -35,8 +35,9 @@ C_FILES =	ft_char.c		\
 			ft_str.c		\
 			ft_utils.c
 			
-BONUS_SRC =	ft_list_bonus.c	\
-			ft_list2_bonus.c
+BONUS_SRC =	ft_lst_edit_bonus.c	\
+			ft_lst_get_bonus.c	\
+			ft_lst_iter_bonus.c
 
 #* Colors
 

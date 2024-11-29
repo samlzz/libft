@@ -44,22 +44,6 @@ int	ft_lstsize(t_list *lst)
 	return (len);
 }
 
-t_list	*ft_lstlast(t_list *lst)
-{
-	t_list	*first;
-
-	if (!lst)
-		return (NULL);
-	first = lst;
-	while (lst->next)
-	{
-		lst = lst->next;
-		if (first == lst)
-			break ;
-	}
-	return (lst);
-}
-
 t_list	*ft_lstoflast(t_list *lst, size_t offset)
 {
 	t_list	*lead;
@@ -83,4 +67,9 @@ t_list	*ft_lstoflast(t_list *lst, size_t offset)
 		follow = follow->next;
 	}
 	return (follow);
+}
+
+t_list	*ft_lstlast(t_list *lst)
+{
+	return (ft_lstoflast(lst, 0));
 }

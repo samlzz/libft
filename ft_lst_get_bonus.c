@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_list_bonus.c                                    :+:      :+:    :+:   */
+/*   ft_lst_get_bonus.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -60,28 +60,27 @@ t_list	*ft_lstlast(t_list *lst)
 	return (lst);
 }
 
-void	ft_lstdelone(t_list *lst, void (*del)(void *))
+t_list	*ft_lstoflast(t_list *lst, size_t offset)
 {
+	t_list	*lead;
+	t_list	*follow;
+	size_t	i;
+
 	if (!lst)
-		return ;
-	del(lst->content);
-	free(lst);
-}
-
-void	ft_lstclear(t_list **lst, void (*del)(void *))
-{
-	t_list	*curr;
-	t_list	*nxt_save;
-
-	curr = *lst;
-	nxt_save = NULL;
-	while (curr)
+		return (NULL);
+	i = 0;
+	lead = lst;
+	follow = lst;
+	while (i++ < offset)
 	{
-		nxt_save = curr->next;
-		ft_lstdelone(curr, del);
-		curr = nxt_save;
-		if (curr == *lst)
-			break ;
+		lead = lead->next;
+		if (!lead)
+			return (NULL);
 	}
-	*lst = NULL;
+	while (lead->next)
+	{
+		lead = lead->next;
+		follow = follow->next;
+	}
+	return (follow);
 }

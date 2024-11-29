@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_list2_bonus.c                                   :+:      :+:    :+:   */
+/*   ft_lst_iter_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,25 +11,6 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-
-void	ft_lstadd_front(t_list **lst, t_list *new)
-{
-	if (new)
-	{
-		new->next = *lst;
-		*lst = new;
-	}
-}
-
-void	ft_lstadd_back(t_list **lst, t_list *new)
-{
-	t_list	*last;
-
-	if (!*lst)
-		return (ft_lstadd_front(lst, new));
-	last = ft_lstlast(*lst);
-	last->next = new;
-}
 
 void	ft_lstiter(t_list *lst, void (*f)(void *))
 {

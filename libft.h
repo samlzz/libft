@@ -41,17 +41,17 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_strnstr(const char *big, const char *little, size_t len);
 
-//		alloc
+//?		alloc
 char	*ft_strdup(const char *s);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strtrim(char const *s1, char const *set);
 
-//		iter
+//?		iter
 char	*ft_strmapi(char const *s, char (*f) (unsigned int, char));
 void	ft_striteri(char *s, void (*f) (unsigned int, char *));
 
-//		split
+//?		split
 char	**ft_split(char const *s, char c);
 
 //* ft_mem
@@ -83,18 +83,19 @@ typedef struct s_list
 	struct s_list	*next;
 }	t_list;
 
-//	list
+//?	get list
 t_list	*ft_lstnew(void *content);
-t_list	*ft_lstlast(t_list *lst);
 int		ft_lstsize(t_list *lst);
+t_list	*ft_lstlast(t_list *lst);
+t_list	*ft_lstoflast(t_list *lst, size_t offset);
 
-//	edit list
+//?	edit list
 void	ft_lstadd_front(t_list **lst, t_list *new);
 void	ft_lstadd_back(t_list **lst, t_list *new);
 void	ft_lstdelone(t_list *lst, void (*del)(void *));
 void	ft_lstclear(t_list **lst, void (*del)(void *));
 
-// iter list
+//? iter list
 void	ft_lstiter(t_list *lst, void (*f)(void *));
 void	ft_lstiteri(t_list *lst, void (*f)(void *, size_t));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));

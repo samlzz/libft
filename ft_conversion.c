@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#	include <stdlib.h>
-#	include <limits.h>
+#include <stdlib.h>
+#include <limits.h>
 
 int	ft_atoi(const char *nptr)
 {

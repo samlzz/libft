@@ -73,7 +73,6 @@ void	ft_lstclear(t_list **lst, void (*del)(void *))
 	t_list	*curr;
 	t_list	*nxt_save;
 
-
 	curr = *lst;
 	nxt_save = NULL;
 	while (curr)

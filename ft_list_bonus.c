@@ -28,30 +28,41 @@ t_list	*ft_lstnew(void *content)
 int	ft_lstsize(t_list *lst)
 {
 	int		len;
+	t_list	*first;
 
 	len = 0;
 	if (!lst)
 		return (len);
+	first = lst;
 	while (lst)
 	{
 		len++;
 		lst = lst->next;
+		if (first == lst)
+			break ;
 	}
 	return (len);
 }
 
 t_list	*ft_lstlast(t_list *lst)
 {
+	t_list	*first;
+
 	if (!lst)
 		return (NULL);
+	first = lst;
 	while (lst->next)
+	{
 		lst = lst->next;
+		if (first == lst)
+			break ;
+	}
 	return (lst);
 }
 
 void	ft_lstdelone(t_list *lst, void (*del)(void *))
 {
-	if (!lst || !del)
+	if (!lst)
 		return ;
 	del(lst->content);
 	free(lst);
@@ -62,6 +73,7 @@ void	ft_lstclear(t_list **lst, void (*del)(void *))
 	t_list	*curr;
 	t_list	*nxt_save;
 
+
 	curr = *lst;
 	nxt_save = NULL;
 	while (curr)
@@ -69,6 +81,8 @@ void	ft_lstclear(t_list **lst, void (*del)(void *))
 		nxt_save = curr->next;
 		ft_lstdelone(curr, del);
 		curr = nxt_save;
+		if (curr == *lst)
+			break ;
 	}
 	*lst = NULL;
 }

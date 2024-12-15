@@ -54,6 +54,7 @@ UNDERLINE = $(ESC)4m
 
 COLOR_PRINT = @printf "$(1)$(2)$(DEF_COLOR)\n"
 
+
 #* Automatic
 
 ifdef INCL_DIR
@@ -61,8 +62,9 @@ ifdef INCL_DIR
 endif
 
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
-OBJS =	$(addprefix $(OBJ_DIR), $(notdir $(SRCS:.c=.o)))
+OBJS := $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 BONUS_OBJ =	$(addprefix $(OBJ_DIR), $(BONUS_SRC:.c=.o))
+O_DIRS := $(sort $(dir $(OBJS)))
 
 #? cmd for make final file
 ifeq ($(suffix $(NAME)), .a)
@@ -75,7 +77,7 @@ endif
 
 all:	$(NAME)
 
-$(NAME): $(OBJ_DIR) $(OBJS)
+$(NAME): $(O_DIRS) $(OBJS)
 	@printf "$(GRAY)"
 	$(LINK_CMD)
 	$(call COLOR_PRINT,$(GREEN)$(UNDERLINE),$(NAME) compiled !)
@@ -84,8 +86,8 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(call COLOR_PRINT,$(YELLOW),Compiling: $<)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR):
-	@$(MD) $(OBJ_DIR)
+$(O_DIRS):
+	@$(MD) $@
 
 bonus: $(NAME) $(BONUS_OBJ)
 	@$(AR) $(NAME) $(BONUS_OBJ)

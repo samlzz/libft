@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 12:11:04 by sliziard          #+#    #+#             */
-/*   Updated: 2024/11/14 13:18:42 by sliziard         ###   ########.fr       */
+/*   Updated: 2024/12/16 12:48:02 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	ft_lstiteri(t_list *lst, void (*f)(void *, size_t))
 	}
 }
 
-t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
+t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), t_lst_f del)
 {
 	t_list	*first;
 	t_list	*mapped;

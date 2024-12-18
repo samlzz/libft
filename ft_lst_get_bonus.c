@@ -69,7 +69,7 @@ t_list	*ft_lstoflast(t_list *lst, size_t offset)
 	return (follow);
 }
 
-t_list *ft_lstlast(t_list *lst)
+t_list	*ft_lstlast(t_list *lst)
 {
 	if (!lst)
 		return (NULL);

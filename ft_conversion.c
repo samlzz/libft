@@ -37,47 +37,47 @@ int	ft_atoi(const char *nptr)
 	return (r * s);
 }
 
-static void	nb_to_astr(long nb, t_str *dest, char *base, size_t b_len)
+static void	nb_to_astr(long nb, t_mem *dest, char *base, size_t b_len)
 {
-	dest->str[dest->len] = '\0';
+	dest->content[dest->size] = '\0';
 	if (nb == 0)
 	{
-		dest->str[0] = base[0];
+		dest->content[0] = base[0];
 		return ;
 	}
 	if (nb < 0)
 	{
 		nb = -nb;
-		dest->str[0] = '-';
+		dest->content[0] = '-';
 	}
 	while (nb)
 	{
-		dest->str[--dest->len] = base[nb % b_len];
+		dest->content[--dest->size] = base[nb % b_len];
 		nb /= b_len;
 	}
 }
 
-static t_str	*init_dest(long n, size_t base_l)
+static t_mem	*init_dest(long n, size_t base_l)
 {
-	t_str	*dest;
+	t_mem	*dest;
 
-	dest = malloc(sizeof (t_str));
+	dest = malloc(sizeof (t_mem));
 	if (!dest)
 		return (NULL);
-	dest->len = 0;
+	dest->size = 0;
 	if (n <= 0)
 	{
-		dest->len = 1;
+		dest->size = 1;
 		if (n)
 			n = -n;
 	}
 	while (n)
 	{
 		n /= base_l;
-		dest->len++;
+		dest->size++;
 	}
-	dest->str = malloc(sizeof (char) * (dest->len + 1));
-	if (!dest->str)
+	dest->content = malloc(sizeof (char) * (dest->size + 1));
+	if (!dest->content)
 	{
 		free(dest);
 		return (NULL);
@@ -88,14 +88,14 @@ static t_str	*init_dest(long n, size_t base_l)
 //* INT
 char	*ft_itoa(int n)
 {
-	t_str	*dest;
+	t_mem	*dest;
 	char	*n_in_base10;
 
 	dest = init_dest((long)n, 10);
 	if (!dest)
 		return (NULL);
 	nb_to_astr((long)n, dest, "0123456789", 10);
-	n_in_base10 = dest->str;
+	n_in_base10 = dest->content;
 	free(dest);
 	return (n_in_base10);
 }

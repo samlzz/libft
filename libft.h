@@ -15,11 +15,11 @@
 
 # include <stddef.h>
 
-typedef struct s_str
+typedef struct s_mem
 {
-	char	*str;
-	size_t	len;
-}	t_str;
+	char	*content;
+	size_t	size;
+}	t_mem;
 
 //* ft_is
 int				ft_isalpha(int c);

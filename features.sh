@@ -1,54 +1,94 @@
 #!/bin/bash
 
 # ANSI Color Codes
-RED='\033[1;31m'
-GREEN='\033[1;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[1;34m'
-MAGENTA='\033[1;35m'
-CYAN='\033[1;36m'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
 RESET='\033[0m'
 BOLD='\033[1m'
 UNDERLINE='\033[4m'
 
-# Function to display a colored menu and handle user input
-function display_menu() {
-    echo -e "${CYAN}What would you like to add to libft?${RESET}"
-    echo -e "${YELLOW}Use arrow keys to navigate and space to select:${RESET}"
-    options=("Automatically compile bonuses" "Add ft_printf" "Add get_next_line" "Quit")
-    selected=()
-    PS3="Please select an option: "
+function MENU() {
+    NC="\033[0m"
+    INDICATOR="<"
+    SELECTED=0
+    OPTIONS=("$@")
+    LENGTH=${#OPTIONS[@]}
 
-    while true; do
-        echo ""
-        select opt in "${options[@]}"; do
-            case $opt in
-                "Automatically compile bonuses")
-                    selected+=("bonus")
-                    echo -e "${GREEN}Bonuses will be compiled automatically.${RESET}"
-                    break
-                    ;;
-                "Add ft_printf")
-                    selected+=("ft_printf")
-                    echo -e "${GREEN}ft_printf will be added.${RESET}"
-                    break
-                    ;;
-                "Add get_next_line")
-                    selected+=("get_next_line")
-                    echo -e "${GREEN}get_next_line will be added.${RESET}"
-                    break
-                    ;;
-                "Quit")
-                    echo -e "${RED}Exiting menu.${RESET}"
-                    return
-                    ;;
-                *)
-                    echo -e "${RED}Invalid option $REPLY${RESET}"
-                    ;;
-            esac
-        done
-    done
+	PRINT_MENU() {
+		clear
+
+		for (( i=0;i<(($LENGTH));i++ )); do
+			if [[ $SELECTED -eq $i ]]; then
+				echo -e "${OPTIONS[$i]} $YELLOW$INDICATOR$NC"
+			else
+				echo "${OPTIONS[$i]}"
+			fi
+		done
+	}
+
+	PRINT_MENU
+
+	while read -rsn1 input; do
+		case $input in
+			"A")
+				if [[ $SELECTED -lt 1 ]]; then
+					SELECTED=$(($LENGTH-1))
+				else
+					SELECTED=$(($SELECTED-1))
+				fi
+				PRINT_MENU
+				;;
+			"B")
+				if [[ $SELECTED -gt $(($LENGTH-2)) ]]; then
+					SELECTED=0
+				else
+					SELECTED=$(($SELECTED+1))
+				fi
+				PRINT_MENU
+				;;
+			"") return $(($SELECTED+1)) ;;
+		esac
+	done
 }
+
+function display_menu() {
+	selected=()
+	OPTIONS=("Automatically compile bonuses" "Add ft_printf" "Add get_next_line" "Quit")
+
+	MENU "${OPTIONS[@]}"
+
+	SELECTION=$?
+	case $SELECTION in
+	1)
+		selected+=("bonus")
+		echo -e "${GREEN}Bonuses will be compiled automatically.${RESET}"
+		break
+		;;
+	2)
+		selected+=("ft_printf")
+		echo -e "${GREEN}ft_printf will be added.${RESET}"
+		break
+		;;
+	3)
+		selected+=("get_next_line")
+		echo -e "${GREEN}get_next_line will be added.${RESET}"
+		break
+		;;
+	4)
+		echo -e "${RED}Exiting menu.${RESET}"
+		clear
+		return
+		;;
+	*)
+		echo -e "${RED}Invalid option $REPLY${RESET}"
+		;;
+	esac
+	clear
+}	
 
 # Function to update Makefile for bonuses
 function compile_bonuses() {
@@ -95,7 +135,7 @@ function add_gnl() {
     git clone https://github.com/user/get_next_line.git
     cd get_next_line || exit
     echo -e "${YELLOW}Cleaning repository...${RESET}"
-    rm -rf !(get_next_line.c|get_next_line_utils.c|get_next_line.h)
+	find . -type f ! -name "get_next_line.c" ! -name "get_next_line_utils.c" ! -name "get_next_line.h" -delete
     cd ..
     handle_include_and_header "get_next_line/get_next_line.h" "get_next_line.h"
 	sed -i "/^C_FILES/ a get_next_line/get_next_line.c \\" Makefile
@@ -106,7 +146,9 @@ function add_gnl() {
 # Main script logic
 clear
 echo -e "${BOLD}${UNDERLINE}Welcome to the Libft Configuration Script${RESET}"
+selected=()
 display_menu
+
 for option in "${selected[@]}"; do
     case $option in
         "bonus")
@@ -125,4 +167,4 @@ done
 echo -e "${CYAN}Script completed.${RESET}"
 echo -e "${MAGENTA}Please run '${BOLD}norminette${RESET}${MAGENTA}' to verify compliance.${RESET}"
 echo -e "${RED}This script will now delete itself.${RESET}"
-rm -- "$0"
+#rm -- "$0"

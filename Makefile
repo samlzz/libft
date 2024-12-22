@@ -17,7 +17,6 @@ NAME =		libft.a
 SRC_DIR =
 OBJ_DIR =
 INCL_DIR = 
-include
 
 CC = cc
 CFLAGS := -Wall -Wextra -Werror
@@ -26,8 +25,6 @@ MD = mkdir -p
 AR = ar rcs
 
 C_FILES =	ft_char.c		\
-get_next_line/get_next_line_utils.c 
-get_next_line/get_next_line.c 
 			ft_conversion.c	\
 			ft_is.c 		\
 			ft_mem.c 		\

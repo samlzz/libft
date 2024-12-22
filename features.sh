@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Git repository adress
+GNL_GIT="git@github.com:samlzz/get_next_line.git"
+FT_PRINTF_GIT=""
+
 # ANSI Color Codes
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -12,11 +16,11 @@ BOLD='\033[1m'
 UNDERLINE='\033[4m'
 
 function MENU() {
-    NC="\033[0m"
-    INDICATOR="<"
-    SELECTED=0
-    OPTIONS=("$@")
-    LENGTH=${#OPTIONS[@]}
+	NC="\033[0m"
+	INDICATOR="<"
+	SELECTED=0
+	OPTIONS=("$@")
+	LENGTH=${#OPTIONS[@]}
 
 	PRINT_MENU() {
 		clear
@@ -92,55 +96,55 @@ function display_menu() {
 
 # Function to update Makefile for bonuses
 function compile_bonuses() {
-    sed -i "/^all:.*\$(NAME)/ s/$/ bonus/" Makefile
-    echo -e "${MAGENTA}Makefile updated to compile bonuses automatically.${RESET}"
+	sed -i "/^all:.*\$(NAME)/ s/$/ bonus/" Makefile
+	echo -e "${MAGENTA}Makefile updated to compile bonuses automatically.${RESET}"
 }
 
 function handle_include_and_header() {
-    local header_path="$1"
-    local header_name="$2"
+	local header_path="$1"
+	local header_name="$2"
 
-    if [ ! -d "include" ]; then
-        echo -e "${YELLOW}Creating 'include' directory...${RESET}"
-        mkdir include
-        mv libft.h include/
-        echo -e "${GREEN}'include' directory created and libft.h moved.${RESET}"
-    fi
+	if [ ! -d "include" ]; then
+		echo -e "${YELLOW}Creating 'include' directory...${RESET}"
+		mkdir include
+		mv libft.h include/
+		echo -e "${GREEN}'include' directory created and libft.h moved.${RESET}"
+	fi
 
-    mv "$header_path" include/
-    sed -i "/# include <stddef.h>/ a # include \"${header_name}\"" include/libft.h
-    sed -i "/^INCL_DIR/ a include" Makefile
-    echo -e "${GREEN}${header_name} successfully added to libft.h.${RESET}"
+	mv "$header_path" include/
+	sed -i "/# include <stddef.h>/ a # include \"${header_name}\"" include/libft.h
+	sed -i "/^INCL_DIR/ a include" Makefile
+	echo -e "${GREEN}${header_name} successfully added to libft.h.${RESET}"
 }
 
 function add_ft_printf() {
-    echo -e "${CYAN}Cloning ft_printf...${RESET}"
-    git clone https://github.com/user/ft_printf.git
-    cd ft_printf || exit
-    echo -e "${YELLOW}Cleaning repository...${RESET}"
-    rm -rf .git Makefile .gitignore
-    mv src/* ./
-    rm -rf src
-    cd ..
-    handle_include_and_header "ft_printf/ft_printf.h" "ft_printf.h"
-    find ft_printf -name '*.c' -exec basename {} \; | while read -r file; do
-        sed -i "/^C_FILES/ a ft_printf/$file \\" Makefile
-    done
-    echo -e "${GREEN}ft_printf added successfully.${RESET}"
+	echo -e "${CYAN}Cloning ft_printf...${RESET}"
+	git clone ${FT_PRINTF_GIT}
+	cd ft_printf || exit
+	echo -e "${YELLOW}Cleaning repository...${RESET}"
+	rm -rf .git Makefile .gitignore
+	mv src/* ./
+	rm -rf src
+	cd ..
+	handle_include_and_header "ft_printf/ft_printf.h" "ft_printf.h"
+	find ft_printf -name '*.c' -exec basename {} \; | while read -r file; do
+		sed -i "/^C_FILES/ a ft_printf/$file \\" Makefile
+	done
+	echo -e "${GREEN}ft_printf added successfully.${RESET}"
 }
 
 # Function to add get_next_line
 function add_gnl() {
-    echo -e "${CYAN}Cloning get_next_line...${RESET}"
-    git clone https://github.com/user/get_next_line.git
-    cd get_next_line || exit
-    echo -e "${YELLOW}Cleaning repository...${RESET}"
+	echo -e "${CYAN}Cloning get_next_line...${RESET}"
+	git clone ${GNL_GIT}
+	cd get_next_line || exit
+	echo -e "${YELLOW}Cleaning repository...${RESET}"
 	find . -type f ! -name "get_next_line.c" ! -name "get_next_line_utils.c" ! -name "get_next_line.h" -delete
-    cd ..
-    handle_include_and_header "get_next_line/get_next_line.h" "get_next_line.h"
+	cd ..
+	handle_include_and_header "get_next_line/get_next_line.h" "get_next_line.h"
 	sed -i "/^C_FILES/ a get_next_line/get_next_line.c \\" Makefile
 	sed -i "/^C_FILES/ a get_next_line/get_next_line_utils.c \\" Makefile
-    echo -e "${GREEN}get_next_line added successfully.${RESET}"
+	echo -e "${GREEN}get_next_line added successfully.${RESET}"
 }
 
 # Main script logic
@@ -150,17 +154,17 @@ selected=()
 display_menu
 
 for option in "${selected[@]}"; do
-    case $option in
-        "bonus")
-            compile_bonuses
-            ;;
-        "ft_printf")
-            add_ft_printf
-            ;;
-        "get_next_line")
-            add_gnl
-            ;;
-    esac
+	case $option in
+		"bonus")
+			compile_bonuses
+			;;
+		"ft_printf")
+			add_ft_printf
+			;;
+		"get_next_line")
+			add_gnl
+			;;
+	esac
 done
 
 # Final steps

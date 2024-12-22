@@ -37,6 +37,16 @@ BRIGHT()
 	echo $((input + 60))
 }
 
+is_contains_others() {
+    local selected="$1"
+    local options=("${!2}")
+    for option in "${options[@]}"; do
+        if [[ "$option" -ne "$selected" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
 
 function menu() {
 	local indicator="$ESC[$BD;${YELLOW}m<"
@@ -79,30 +89,31 @@ function menu() {
 		case $c in
 			"A")
 				SELECTED=$(( (SELECTED - 1 + len) % len ))
-				print_menu
 				;;
 			"B")
 				SELECTED=$(( (SELECTED + 1) % len ))
-				print_menu
 				;;
 			" ")
 				#? if selected was already selected remove it, else add it
 				if [[ " ${SELECTED_OPTIONS[*]} " =~ " $SELECTED " ]]; then
 					SELECTED_OPTIONS=("${SELECTED_OPTIONS[@]/$SELECTED}")
 				else 
-					#? Check if it not last option (quit)
-					if (( SELECTED == len - 1 )); then
-						quit_selected=1
-					else
 						SELECTED_OPTIONS+=($SELECTED)
-					fi
 				fi
-				print_menu
 				;;
 			"")
-				break
+				if (( SELECTED == len - 1 )); then
+					if is_contains_others "$SELECTED" SELECTED_OPTIONS[@]; then
+						quit_selected=1
+					else
+						break
+					fi
+				else
+					break
+				fi
 				;;
 		esac
+		print_menu
 	done
 
     echo "${SELECTED_OPTIONS[@]}"
@@ -121,41 +132,45 @@ function handle_include_and_header() {
 		echo -e "$ESC[0;$(BRIGHT $YELLOW)mCreating 'include' directory...${RESET}"
 		mkdir include
 		mv libft.h include/
+		sed -i '/^INCL_DIR =/ s/$/ include/' Makefile
 	fi
 
 	mv "$header_path" include/
 	sed -i "/# include <stddef.h>/ a # include \"${header_name}\"" include/libft.h
-	sed -i "/^INCL_DIR/ a include" Makefile
-	echo -e "$ESC[0;${GREEN}m$header_name successfully added to libft.h.${RESET}"
+	echo -e "$ESC[0;${MAGENTA}m'libft.h' was moved"
 }
 
 function add_ft_printf() {
-	echo -e "${CYAN}Cloning ft_printf...${GREY}"
+	local tabs='\t\t\t'
+
+	echo -e "$ESC[0;${CYAN}mCloning ft_printf...$ESC[$IT;${BLACK}m"
 	git clone ${FT_PRINTF_GIT}
 	cd ft_printf || exit
-	echo -e "${YELLOW}Cleaning repository...${RESET}"
+	echo -e "$ESC[0;${YELLOW}mCleaning repository...${RESET}"
 	rm -rf .git Makefile .gitignore
 	mv src/* ./
 	rm -rf src
 	cd ..
 	handle_include_and_header "ft_printf/ft_printf.h" "ft_printf.h"
 	find ft_printf -name '*.c' -exec basename {} \; | while read -r file; do
-		sed -i "/^C_FILES/ a ft_printf/$file \\" Makefile
+		sed -i "/^C_FILES =/a \ ${tabs}ft_printf/${file}\t\\" Makefile
 	done
-	echo -e "${GREEN}ft_printf added successfully.${RESET}"
+	echo -e "$ESC[0;${MAGENTA}mft_printf added successfully.${RESET}"
 }
 
 function add_gnl() {
-	echo -e "${CYAN}Cloning get_next_line...${GREY}"
+	local tabs='\t\t\t'
+
+	echo -e "$ESC[0;${CYAN}mCloning get_next_line...$ESC[$IT;${BLACK}m"
 	git clone ${GNL_GIT}
 	cd get_next_line || exit
-	echo -e "${YELLOW}Cleaning repository...${RESET}"
+	echo -e "$ESC[0;${YELLOW}mCleaning repository...${RESET}"
 	find . -type f ! -name "get_next_line.c" ! -name "get_next_line_utils.c" ! -name "get_next_line.h" -delete
 	cd ..
 	handle_include_and_header "get_next_line/get_next_line.h" "get_next_line.h"
-	sed -i "/^C_FILES/ a get_next_line/get_next_line.c \\" Makefile
-	sed -i "/^C_FILES/ a get_next_line/get_next_line_utils.c \\" Makefile
-	echo -e "${GREEN}get_next_line added successfully.${RESET}"
+	sed -i "/^C_FILES =/a \ ${tabs}get_next_line/get_next_line.c\t\\" Makefile
+	sed -i "/^C_FILES =/a \ ${tabs}get_next_line/get_next_line_utils.c\t\\" Makefile
+	echo -e "$ESC[0;${MAGENTA}mget_next_line added successfully.${RESET}"
 }
 
 function navigate_to_libft() {
@@ -199,7 +214,7 @@ for i in "${SELECTED_OPTIONS[@]}"; do
     echo "- $i"
 done
 
-echo -e "$ESC[$BD;${CYAN}mScript completed !${RESET}"
+echo -e "$ESC[$BD;${GREEN}mScript completed !${RESET}"
 echo -e "$ESC[0;${MAGENTA}mPlease run '$ESC[${BD}mnorminette$ESC[22m' to verify compliance.${RESET}"
 echo -e "$ESC[0;${RED}mThis script will now delete itself.${RESET}"
 #rm -- "$0"

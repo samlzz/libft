@@ -1,103 +1,116 @@
 #!/bin/bash
 
-# Git repository adress
+#? Git repository adress
 GNL_GIT="git@github.com:samlzz/get_next_line.git"
 FT_PRINTF_GIT=""
 
-# ANSI Color Codes
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-MAGENTA='\033[0;35m'
-CYAN='\033[0;36m'
-RESET='\033[0m'
-BOLD='\033[1m'
-UNDERLINE='\033[4m'
+#* ANSI color codes 
+# format: '$ESC[<style>;<color>m
 
-function MENU() {
-	NC="\033[0m"
-	INDICATOR="<"
-	SELECTED=0
-	OPTIONS=("$@")
-	LENGTH=${#OPTIONS[@]}
+ESC='\033'
+#? style
+BD=1
+IT=3
+UD=4
+RV=7
 
-	PRINT_MENU() {
-		clear
+#? colors
+BLACK=30
+RED=31
+GREEN=32
+YELLOW=33
+BLUE=34
+MAGENTA=35
+CYAN=36
+WHITE=37
 
-		for (( i=0;i<(($LENGTH));i++ )); do
-			if [[ $SELECTED -eq $i ]]; then
-				echo -e "${OPTIONS[$i]} $YELLOW$INDICATOR$NC"
-			else
-				echo "${OPTIONS[$i]}"
-			fi
-		done
-	}
+RESET="$ESC[0m"
 
-	PRINT_MENU
-
-	while read -rsn1 input; do
-		case $input in
-			"A")
-				if [[ $SELECTED -lt 1 ]]; then
-					SELECTED=$(($LENGTH-1))
-				else
-					SELECTED=$(($SELECTED-1))
-				fi
-				PRINT_MENU
-				;;
-			"B")
-				if [[ $SELECTED -gt $(($LENGTH-2)) ]]; then
-					SELECTED=0
-				else
-					SELECTED=$(($SELECTED+1))
-				fi
-				PRINT_MENU
-				;;
-			"") return $(($SELECTED+1)) ;;
-		esac
-	done
+BG()
+{
+	local input=$1
+	echo $((input + 10))
+}
+BRIGHT()
+{
+	local input=$1
+	echo $((input + 60))
 }
 
-function display_menu() {
-	selected=()
-	OPTIONS=("Automatically compile bonuses" "Add ft_printf" "Add get_next_line" "Quit")
 
-	MENU "${OPTIONS[@]}"
+function menu() {
+	local indicator="$ESC[$BD;${YELLOW}m<"
+	options=("$@")
+	local len=${#options[@]}
+	local quit_selected=0
+	SELECTED=0
+	SELECTED_OPTIONS=()
 
-	SELECTION=$?
-	case $SELECTION in
-	1)
-		selected+=("bonus")
-		echo -e "${GREEN}Bonuses will be compiled automatically.${RESET}"
-		break
-		;;
-	2)
-		selected+=("ft_printf")
-		echo -e "${GREEN}ft_printf will be added.${RESET}"
-		break
-		;;
-	3)
-		selected+=("get_next_line")
-		echo -e "${GREEN}get_next_line will be added.${RESET}"
-		break
-		;;
-	4)
-		echo -e "${RED}Exiting menu.${RESET}"
+	print_menu() {
+		HILIGHT="$ESC[$UD;$(BRIGHT $CYAN)m"
 		clear
-		return
-		;;
-	*)
-		echo -e "${RED}Invalid option $REPLY${RESET}"
-		;;
-	esac
-	clear
-}	
 
-# Function to update Makefile for bonuses
+		echo -e "${HILIGHT}Welcome to the $ESC[${BD}mLibft$ESC[22m Configuration Script${RESET}"
+		echo -e "$ESC[$IT;${BLACK}mNavigate with arrow, press space to select and enter for submit${RESET}"
+		echo ""
+
+		for (( i=0; i<len; i++ )); do
+			if [[ " ${SELECTED_OPTIONS[*]} " =~ " $i " ]]; then
+				mark="$ESC[0;${BLUE}m~"
+			else
+				mark="-"
+			fi
+
+			if [[ $SELECTED -eq $i ]]; then
+				echo -e "$ESC[38;5;15m $mark ${options[$i]} $indicator${RESET}"
+			else
+				echo -e "$mark ${options[$i]}$RESET"
+			fi
+		done
+		if [[ quit_selected -eq 1 ]]; then
+			echo -e "$ESC[$IT;${RED}mYou can't select multiple options if yout want to quit.${RESET}"
+			quit_selected=0
+		fi
+	}
+
+    print_menu
+
+	while IFS="" read -r -s -n 1 c; do
+		case $c in
+			"A")
+				SELECTED=$(( (SELECTED - 1 + len) % len ))
+				print_menu
+				;;
+			"B")
+				SELECTED=$(( (SELECTED + 1) % len ))
+				print_menu
+				;;
+			" ")
+				#? if selected was already selected remove it, else add it
+				if [[ " ${SELECTED_OPTIONS[*]} " =~ " $SELECTED " ]]; then
+					SELECTED_OPTIONS=("${SELECTED_OPTIONS[@]/$SELECTED}")
+				else 
+					#? Check if it not last option (quit)
+					if (( SELECTED == len - 1 )); then
+						quit_selected=1
+					else
+						SELECTED_OPTIONS+=($SELECTED)
+					fi
+				fi
+				print_menu
+				;;
+			"")
+				break
+				;;
+		esac
+	done
+
+    echo "${SELECTED_OPTIONS[@]}"
+}
+
 function compile_bonuses() {
 	sed -i "/^all:.*\$(NAME)/ s/$/ bonus/" Makefile
-	echo -e "${MAGENTA}Makefile updated to compile bonuses automatically.${RESET}"
+	echo -e "$ESC[0;${MAGENTA}mBonuses will be compiled automatically.${RESET}"
 }
 
 function handle_include_and_header() {
@@ -105,20 +118,19 @@ function handle_include_and_header() {
 	local header_name="$2"
 
 	if [ ! -d "include" ]; then
-		echo -e "${YELLOW}Creating 'include' directory...${RESET}"
+		echo -e "$ESC[0;$(BRIGHT $YELLOW)mCreating 'include' directory...${RESET}"
 		mkdir include
 		mv libft.h include/
-		echo -e "${GREEN}'include' directory created and libft.h moved.${RESET}"
 	fi
 
 	mv "$header_path" include/
 	sed -i "/# include <stddef.h>/ a # include \"${header_name}\"" include/libft.h
 	sed -i "/^INCL_DIR/ a include" Makefile
-	echo -e "${GREEN}${header_name} successfully added to libft.h.${RESET}"
+	echo -e "$ESC[0;${GREEN}m$header_name successfully added to libft.h.${RESET}"
 }
 
 function add_ft_printf() {
-	echo -e "${CYAN}Cloning ft_printf...${RESET}"
+	echo -e "${CYAN}Cloning ft_printf...${GREY}"
 	git clone ${FT_PRINTF_GIT}
 	cd ft_printf || exit
 	echo -e "${YELLOW}Cleaning repository...${RESET}"
@@ -133,9 +145,8 @@ function add_ft_printf() {
 	echo -e "${GREEN}ft_printf added successfully.${RESET}"
 }
 
-# Function to add get_next_line
 function add_gnl() {
-	echo -e "${CYAN}Cloning get_next_line...${RESET}"
+	echo -e "${CYAN}Cloning get_next_line...${GREY}"
 	git clone ${GNL_GIT}
 	cd get_next_line || exit
 	echo -e "${YELLOW}Cleaning repository...${RESET}"
@@ -147,28 +158,48 @@ function add_gnl() {
 	echo -e "${GREEN}get_next_line added successfully.${RESET}"
 }
 
-# Main script logic
-clear
-echo -e "${BOLD}${UNDERLINE}Welcome to the Libft Configuration Script${RESET}"
-selected=()
-display_menu
+function navigate_to_libft() {
+	if [[ $(basename "$PWD") == "libft" ]]; then
+		echo "Already in the libft directory."
+		return
+	fi
 
-for option in "${selected[@]}"; do
-	case $option in
-		"bonus")
-			compile_bonuses
-			;;
-		"ft_printf")
-			add_ft_printf
-			;;
-		"get_next_line")
-			add_gnl
-			;;
-	esac
+	LIBFT_PATH=$(find . -type d -name "libft" -print -quit)
+
+	if [[ -n "$LIBFT_PATH" ]]; then
+		cd "$LIBFT_PATH" || { echo -e "${RED}Error: Failed to navigate to $LIBFT_PATH."; exit 1; }
+	else
+		echo -e "${RED}Error: 'libft' directory not found."
+		exit 1
+	fi
+}
+
+#* Main
+navigate_to_libft
+clear
+
+options=("Automatically compile bonuses" "Add ft_printf" "Add get_next_line" "Quit")
+menu "${options[@]}"
+clear
+#for select_i in "${SELECTED_OPTIONS[@]}"; do
+#	case $SELECTION in
+#		0)
+#			compile_bonuses
+#			;;
+#		1)
+#			add_ft_printf
+#			;;
+#		2)
+#			add_gnl
+#			;;
+#	esac
+#done
+
+for i in "${SELECTED_OPTIONS[@]}"; do
+    echo "- $i"
 done
 
-# Final steps
-echo -e "${CYAN}Script completed.${RESET}"
-echo -e "${MAGENTA}Please run '${BOLD}norminette${RESET}${MAGENTA}' to verify compliance.${RESET}"
-echo -e "${RED}This script will now delete itself.${RESET}"
+echo -e "$ESC[$BD;${CYAN}mScript completed !${RESET}"
+echo -e "$ESC[0;${MAGENTA}mPlease run '$ESC[${BD}mnorminette$ESC[22m' to verify compliance.${RESET}"
+echo -e "$ESC[0;${RED}mThis script will now delete itself.${RESET}"
 #rm -- "$0"

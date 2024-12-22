@@ -2,7 +2,7 @@
 
 #? Git repository adress
 GNL_GIT="git@github.com:samlzz/get_next_line.git"
-FT_PRINTF_GIT=""
+FT_PRINTF_GIT="git@sbi.com"
 
 #* ANSI color codes 
 # format: '$ESC[<style>;<color>m
@@ -35,6 +35,13 @@ BRIGHT()
 {
 	local input=$1
 	echo $((input + 60))
+}
+
+handle_error() {
+    local message="$1"
+
+    echo -e "$RESET$ESC[$BD;91mError:$ESC[22m ${message}${RESET}" >&2
+    exit 1
 }
 
 is_contains_others() {
@@ -120,7 +127,7 @@ function menu() {
 }
 
 function compile_bonuses() {
-	sed -i "/^all:.*\$(NAME)/ s/$/ bonus/" Makefile
+	sed -i "/^all:.*\$(NAME)/ s/$/ bonus/" Makefile || handle_error "Failed to update Makefile for auto-compil bonuses."
 	echo -e "$ESC[0;${MAGENTA}mBonuses will be compiled automatically.${RESET}"
 }
 
@@ -130,13 +137,13 @@ function handle_include_and_header() {
 
 	if [ ! -d "include" ]; then
 		echo -e "$ESC[0;$(BRIGHT $YELLOW)mCreating 'include' directory...${RESET}"
-		mkdir include
-		mv libft.h include/
-		sed -i '/^INCL_DIR =/ s/$/ include/' Makefile
+		mkdir include || handle_error "Failed to create 'include' directory."
+		mv libft.h include/ || handle_error "Failed to move 'libft.h' to 'include'."
+		sed -i '/^INCL_DIR =/ s/$/ include/' Makefile || handle_error "Failed to update 'INCL_DIR' in Makefile."
 	fi
 
-	mv "$header_path" include/
-	sed -i "/# include <stddef.h>/ a # include \"${header_name}\"" include/libft.h
+	mv "$header_path" include/ || handle_error "Failed to move '$header_path'."
+	sed -i "/# include <stddef.h>/ a # include \"${header_name}\"" include/libft.h || handle_error "Failed to update 'libft.h'."
 	echo -e "$ESC[0;${MAGENTA}m'libft.h' was moved"
 }
 
@@ -144,33 +151,33 @@ function add_ft_printf() {
 	local tabs='\t\t\t'
 
 	echo -e "$ESC[0;${CYAN}mCloning ft_printf...$ESC[$IT;${BLACK}m"
-	git clone ${FT_PRINTF_GIT}
-	cd ft_printf || exit
+	git clone ${FT_PRINTF_GIT} || handle_error "Failed to clone ft_printf repository."
+	cd ft_printf || handle_error "Failed to navigate to ft_printf directory."
 	echo -e "$ESC[0;${YELLOW}mCleaning repository...${RESET}"
 	rm -rf .git Makefile .gitignore
-	mv src/* ./
-	rm -rf src
-	cd ..
+	mv src/* ./ || handle_error "Failed to move source files."
+	rm -rf src 
+	cd .. || handle_error "Failed to navigate back to parent directory."
 	handle_include_and_header "ft_printf/ft_printf.h" "ft_printf.h"
 	find ft_printf -name '*.c' -exec basename {} \; | while read -r file; do
-		sed -i "/^C_FILES =/a \ ${tabs}ft_printf/${file}\t\\" Makefile
+		sed -i "/^C_FILES =/a \ ${tabs}ft_printf/${file}\t\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
 	done
-	echo -e "$ESC[0;${MAGENTA}mft_printf added successfully.${RESET}"
+	echo -e "$ESC[0;${MAGENTA}mFt_printf added successfully.${RESET}"
 }
 
 function add_gnl() {
 	local tabs='\t\t\t'
 
 	echo -e "$ESC[0;${CYAN}mCloning get_next_line...$ESC[$IT;${BLACK}m"
-	git clone ${GNL_GIT}
-	cd get_next_line || exit
+	git clone ${GNL_GIT} || handle_error "Failed to clone get next line repository."
+	cd get_next_line || handle_error "Failed to navigate to 'get_next_line' directory."
 	echo -e "$ESC[0;${YELLOW}mCleaning repository...${RESET}"
 	find . -type f ! -name "get_next_line.c" ! -name "get_next_line_utils.c" ! -name "get_next_line.h" -delete
-	cd ..
+	cd .. || handle_error "Failed to navigate back to parent directory."
 	handle_include_and_header "get_next_line/get_next_line.h" "get_next_line.h"
-	sed -i "/^C_FILES =/a \ ${tabs}get_next_line/get_next_line.c\t\\" Makefile
-	sed -i "/^C_FILES =/a \ ${tabs}get_next_line/get_next_line_utils.c\t\\" Makefile
-	echo -e "$ESC[0;${MAGENTA}mget_next_line added successfully.${RESET}"
+	sed -i "/^C_FILES =/a \ ${tabs}get_next_line/get_next_line.c\t\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
+	sed -i "/^C_FILES =/a \ ${tabs}get_next_line/get_next_line_utils.c\t\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
+	echo -e "$ESC[0;${MAGENTA}mGet_next_line added successfully.${RESET}"
 }
 
 function navigate_to_libft() {
@@ -196,25 +203,25 @@ clear
 options=("Automatically compile bonuses" "Add ft_printf" "Add get_next_line" "Quit")
 menu "${options[@]}"
 clear
-#for select_i in "${SELECTED_OPTIONS[@]}"; do
-#	case $SELECTION in
-#		0)
-#			compile_bonuses
-#			;;
-#		1)
-#			add_ft_printf
-#			;;
-#		2)
-#			add_gnl
-#			;;
-#	esac
-#done
-
-for i in "${SELECTED_OPTIONS[@]}"; do
-    echo "- $i"
+for select_i in "${SELECTED_OPTIONS[@]}"; do
+	case $select_i in
+		0)
+			compile_bonuses
+			;;
+		1)
+			add_ft_printf
+			;;
+		2)
+			add_gnl
+			;;
+	esac
 done
 
+#for i in "${SELECTED_OPTIONS[@]}"; do
+#    echo "- $i"
+#done
+
 echo -e "$ESC[$BD;${GREEN}mScript completed !${RESET}"
-echo -e "$ESC[0;${MAGENTA}mPlease run '$ESC[${BD}mnorminette$ESC[22m' to verify compliance.${RESET}"
+echo -e "$ESC[0;${CYAN}mPlease run '$ESC[${BD}mnorminette$ESC[22m' to verify compliance.${RESET}"
 echo -e "$ESC[0;${RED}mThis script will now delete itself.${RESET}"
 #rm -- "$0"

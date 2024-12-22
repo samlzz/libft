@@ -128,7 +128,7 @@ function menu() {
 
 function compile_bonuses() {
 	sed -i "/^all:.*\$(NAME)/ s/$/ bonus/" Makefile || handle_error "Failed to update Makefile for auto-compil bonuses."
-	echo -e "$ESC[0;${MAGENTA}mBonuses will be compiled automatically.${RESET}"
+	echo -e "$ESC[0;${GREEN}mBonuses will be compiled automatically !${RESET}"
 }
 
 function handle_include_and_header() {
@@ -144,12 +144,10 @@ function handle_include_and_header() {
 
 	mv "$header_path" include/ || handle_error "Failed to move '$header_path'."
 	sed -i "/# include <stddef.h>/ a # include \"${header_name}\"" include/libft.h || handle_error "Failed to update 'libft.h'."
-	echo -e "$ESC[0;${MAGENTA}m'libft.h' was moved"
+	echo -e "$ESC[2;${GREEN}m'libft.h' was moved."
 }
 
 function add_ft_printf() {
-	local tabs='\t\t\t'
-
 	echo -e "$ESC[0;${CYAN}mCloning ft_printf...$ESC[$IT;${BLACK}m"
 	git clone ${FT_PRINTF_GIT} || handle_error "Failed to clone ft_printf repository."
 	cd ft_printf || handle_error "Failed to navigate to ft_printf directory."
@@ -159,14 +157,14 @@ function add_ft_printf() {
 	rm -rf src 
 	cd .. || handle_error "Failed to navigate back to parent directory."
 	handle_include_and_header "ft_printf/ft_printf.h" "ft_printf.h"
+
 	find ft_printf -name '*.c' -exec basename {} \; | while read -r file; do
-		sed -i "/^C_FILES =/a \ ${tabs}ft_printf/${file}\t\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
+		sed -i "/^C_FILES =/a \ $(printf '\t\t\t')ft_printf/${file}$(printf '\t')\\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
 	done
-	echo -e "$ESC[0;${MAGENTA}mFt_printf added successfully.${RESET}"
+	echo -e "$ESC[0;${GREEN}mFt_printf added successfully !${RESET}"
 }
 
 function add_gnl() {
-	local tabs='\t\t\t'
 
 	echo -e "$ESC[0;${CYAN}mCloning get_next_line...$ESC[$IT;${BLACK}m"
 	git clone ${GNL_GIT} || handle_error "Failed to clone get next line repository."
@@ -175,9 +173,10 @@ function add_gnl() {
 	find . -type f ! -name "get_next_line.c" ! -name "get_next_line_utils.c" ! -name "get_next_line.h" -delete
 	cd .. || handle_error "Failed to navigate back to parent directory."
 	handle_include_and_header "get_next_line/get_next_line.h" "get_next_line.h"
-	sed -i "/^C_FILES =/a \ ${tabs}get_next_line/get_next_line.c\t\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
-	sed -i "/^C_FILES =/a \ ${tabs}get_next_line/get_next_line_utils.c\t\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
-	echo -e "$ESC[0;${MAGENTA}mGet_next_line added successfully.${RESET}"
+
+	sed -i "/^C_FILES =/a \ $(printf '\t\t\t')get_next_line/get_next_line.c \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
+	sed -i "/^C_FILES =/a \ $(printf '\t\t\t')get_next_line/get_next_line_utils.c \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
+	echo -e "$ESC[0;${GREEN}mGet_next_line added successfully !${RESET}"
 }
 
 function navigate_to_libft() {
@@ -196,32 +195,87 @@ function navigate_to_libft() {
 	fi
 }
 
-#* Main
-navigate_to_libft
-clear
+display_and_confirm() {
+	local options=("$@")
+	local width=0
 
+	remove_duplicates() {
+		local input_array=("$@")
+		local -A seen=()
+		local unique_array=()
+
+		for num in "${input_array[@]}"; do
+			if [[ -z ${seen[$num]} ]]; then
+				unique_array+=("$num")
+				seen[$num]=1
+			fi
+		done
+
+		echo "${unique_array[@]}"
+	}
+
+	print_rectangle()
+	{
+		local	elements=("$@")
+		width=$((width + 4))
+		echo ""
+		echo "┌$(printf '─%.0s' $(seq 1 $width))┐"
+
+		for selected in "${elements[@]}"; do
+			printf "│ %-*s │\n" $((width - 2)) "${options[selected]}"
+		done
+
+		echo "└$(printf '─%.0s' $(seq 1 $width))┘"
+		echo ""
+	}
+
+    #? Find the max width for rectangle
+    for selected in "${SELECTED_OPTIONS[@]}"; do
+        [[ ${#options[selected]} -gt $width ]] && width=${#options[selected]}
+    done
+
+	local unique_selected=($(remove_duplicates "${SELECTED_OPTIONS[@]}"))
+	print_rectangle "${unique_selected[@]}"
+
+	#? Ask confirmation
+    while true; do
+        echo -e "$ESC[${YELLOW}mConfirm your selection ? (Y/n):${RESET}"
+        read -r -p ' > ' confirmation
+		confirmation=${confirmation:-y}
+        case $confirmation in
+            [Yy]*) return 0 ;;
+            [Nn]*) echo -e "$ESC[${RED}mOperation canceled.${RESET}"; return 1 ;;
+            *) echo -e "$ESC[${MAGENTA}mPlease answer 'y' or 'n'.${RESET}" ;;
+        esac
+    done
+}
+
+
+#* Main
 options=("Automatically compile bonuses" "Add ft_printf" "Add get_next_line" "Quit")
+
+navigate_to_libft
 menu "${options[@]}"
 clear
-for select_i in "${SELECTED_OPTIONS[@]}"; do
-	case $select_i in
-		0)
-			compile_bonuses
-			;;
-		1)
-			add_ft_printf
-			;;
-		2)
-			add_gnl
-			;;
-	esac
-done
+
+if display_and_confirm "${options[@]}"; then
+    for i in "${SELECTED_OPTIONS[@]}"; do
+        case $i in
+            0) compile_bonuses ;;
+            1) add_ft_printf ;;
+            2) add_gnl ;;
+        esac
+    done
+else
+    echo -e "$ESC[0;${CYAN}mNo actions were performed.${RESET}"
+	exit 0
+fi
 
 #for i in "${SELECTED_OPTIONS[@]}"; do
 #    echo "- $i"
 #done
-
+echo ""
 echo -e "$ESC[$BD;${GREEN}mScript completed !${RESET}"
-echo -e "$ESC[0;${CYAN}mPlease run '$ESC[${BD}mnorminette$ESC[22m' to verify compliance.${RESET}"
+echo -e "$ESC[0;${MAGENTA}mPlease run '$ESC[${BD}mnorminette$ESC[22m' to verify compliance.${RESET}"
 echo -e "$ESC[0;${RED}mThis script will now delete itself.${RESET}"
 #rm -- "$0"

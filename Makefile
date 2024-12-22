@@ -16,7 +16,7 @@ NAME =		libft.a
 #TODO: Folders name must end with '\'
 SRC_DIR =
 OBJ_DIR =
-INCL_DIR =
+INCL_DIR = 
 
 CC = cc
 CFLAGS := -Wall -Wextra -Werror

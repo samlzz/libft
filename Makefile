@@ -94,6 +94,7 @@ bonus: $(NAME) $(BONUS_OBJ)
 
 clean:
 	@$(RM) $(OBJS)
+	@$(RM) $(BONUS_OBJ)
 	@$(RM) -r $(OBJ_DIR)
 	@$(RM) libft_obj.txt
 	$(call COLOR_PRINT,$(BLUE),$(NAME) object files cleaned!)

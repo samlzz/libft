@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
-#    Updated: 2024/12/23 01:39:16 by sliziard         ###   ########.fr        #
+#    Updated: 2024/12/23 01:41:49 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -188,7 +188,7 @@ function add_gnl() {
 	cd .. || handle_error "Failed to navigate back to parent directory."
 	handle_include_and_header "get_next_line/get_next_line.h" "get_next_line.h"
 
-	sed -i '/typedef struct s_mem/,/}.*;/d' libft.h || handle_error "Failed to delete t_mem in 'libft.h'."
+	sed -i '/typedef struct s_mem/,/}.*;/d' include/libft.h || handle_error "Failed to delete t_mem in 'libft.h'."
 	sed -i "/^C_FILES =/a \ $(printf '\t\t\t')get_next_line/get_next_line.c \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
 	sed -i "/^C_FILES =/a \ $(printf '\t\t\t')get_next_line/get_next_line_utils.c \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
 	echo -e "$ESC[0;${GREEN}mGet_next_line added successfully !${RESET}"

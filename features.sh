@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    features.sh                                        :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
+#    Updated: 2024/12/23 01:04:59 by sliziard         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 #!/bin/bash
 
 #? Git repository adress
@@ -37,6 +49,8 @@ BRIGHT()
 	echo $((input + 60))
 }
 
+#* Functions
+
 handle_error() {
     local message="$1"
 
@@ -55,7 +69,7 @@ is_contains_others() {
     return 1
 }
 
-function menu() {
+MENU() {
 	local indicator="$ESC[$BD;${YELLOW}m<"
 	options=("$@")
 	local len=${#options[@]}
@@ -131,7 +145,7 @@ function compile_bonuses() {
 	echo -e "$ESC[0;${GREEN}mBonuses will be compiled automatically !${RESET}"
 }
 
-function handle_include_and_header() {
+handle_include_and_header() {
 	local header_path="$1"
 	local header_name="$2"
 
@@ -179,7 +193,7 @@ function add_gnl() {
 	echo -e "$ESC[0;${GREEN}mGet_next_line added successfully !${RESET}"
 }
 
-function navigate_to_libft() {
+navigate_to_libft() {
 	if [[ $(basename "$PWD") == "libft" ]]; then
 		echo "Already in the libft directory."
 		return
@@ -251,11 +265,12 @@ display_and_confirm() {
 }
 
 
-#* Main
+#* Main script logic
+
 options=("Automatically compile bonuses" "Add ft_printf" "Add get_next_line" "Quit")
 
 navigate_to_libft
-menu "${options[@]}"
+MENU "${options[@]}"
 clear
 
 if display_and_confirm "${options[@]}"; then

@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
-#    Updated: 2024/12/23 01:04:59 by sliziard         ###   ########.fr        #
+#    Updated: 2024/12/23 01:30:48 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -211,45 +211,32 @@ navigate_to_libft() {
 
 display_and_confirm() {
 	local options=("$@")
-	local width=0
-
-	remove_duplicates() {
-		local input_array=("$@")
-		local -A seen=()
-		local unique_array=()
-
-		for num in "${input_array[@]}"; do
-			if [[ -z ${seen[$num]} ]]; then
-				unique_array+=("$num")
-				seen[$num]=1
-			fi
-		done
-
-		echo "${unique_array[@]}"
-	}
 
 	print_rectangle()
 	{
 		local	elements=("$@")
+		local	width=0
+
+		#? Find the max width for rectangle
+		for selected in "${SELECTED_OPTIONS[@]}"; do
+			[[ ${#options[selected]} -gt $width ]] && width=${#options[selected]}
+		done
 		width=$((width + 4))
+
 		echo ""
 		echo "┌$(printf '─%.0s' $(seq 1 $width))┐"
 
 		for selected in "${elements[@]}"; do
-			printf "│ %-*s │\n" $((width - 2)) "${options[selected]}"
+			if [[ -n $selected ]]; then
+				printf "│ %-*s │\n" $((width - 2)) "${options[selected]}"
+			fi
 		done
 
 		echo "└$(printf '─%.0s' $(seq 1 $width))┘"
 		echo ""
 	}
 
-    #? Find the max width for rectangle
-    for selected in "${SELECTED_OPTIONS[@]}"; do
-        [[ ${#options[selected]} -gt $width ]] && width=${#options[selected]}
-    done
-
-	local unique_selected=($(remove_duplicates "${SELECTED_OPTIONS[@]}"))
-	print_rectangle "${unique_selected[@]}"
+	print_rectangle "${SELECTED_OPTIONS[@]}"
 
 	#? Ask confirmation
     while true; do

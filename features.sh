@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
-#    Updated: 2025/01/02 13:40:01 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/02 13:52:23 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -164,8 +164,7 @@ handle_include_and_header() {
 function add_ft_printf() {
 	local lib_subfolder="ft_printflib_ft"
 	echo -e "$ESC[$BD;${MAGENTA}mThe structure of libft folder is about to change.${RESET}"
-	echo -e "$ESC[$IT;${WHITE}mNothing will change for you $ESC[${BD}mexcept$ESC[${IT}m the name of archive.$ESC[${BD};${MAGENTA}m (libft.a => libftprintf.a)${RESET}"
-	echo -e "$ESC[$BD;${YELLOW}mDo not forget to update LIBFT var in your Makefile !$RESET"
+	echo -e "$ESC[0;${BLACK}mNothing will change for you.${RESET}"
 
 	mkdir "$lib_subfolder"
 	for item in *; do
@@ -188,10 +187,11 @@ function add_ft_printf() {
 	cd .. || handle_error "Failed to navigate back to parent directory."
 	mv ./.temp/* ./ || handle_error "Failed to move printf source in current directory"
 	rm -rf ./.temp || handle_error "Failed to delete '.temp' directory"
-	
+		
+	sed -i "s/^NAME = libftprintf.a$/NAME = libft.a/" Makefile
 	sed -i "s/^LIBFT = libft$/LIBFT = $lib_subfolder/" Makefile
 	if [ -d "$lib_subfolder/include" ]; then
-		sed -i '/^INCL_DIR = $(LIBFT)/ s/=\s*/= include\//' Makefile
+		sed -i '/^INCL_DIR = $(LIBFT)/ s|$(LIBFT)$|$(LIBFT) /include/|' Makefile
 	fi
 	echo -e "$ESC[0;${GREEN}mFt_printf added successfully !${RESET}"
 }
@@ -297,11 +297,8 @@ else
 	exit 0
 fi
 
-#for i in "${SELECTED_OPTIONS[@]}"; do
-#    echo "- $i"
-#done
 echo ""
 echo -e "$ESC[$BD;${GREEN}mScript completed !${RESET}"
 echo -e "$ESC[0;${MAGENTA}mPlease run '$ESC[${BD}mnorminette$ESC[22m' to verify compliance.${RESET}"
 echo -e "$ESC[0;${RED}mThis script will now delete itself.${RESET}"
-#rm -- "$0"
+rm -- "$0"

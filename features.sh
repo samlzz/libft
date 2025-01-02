@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
-#    Updated: 2025/01/02 13:55:50 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/02 14:26:56 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -162,13 +162,13 @@ handle_include_and_header() {
 }
 
 function add_ft_printf() {
-	local lib_subfolder="ft_printflib_ft"
+	local lib_subfolder="libft"
 	echo -e "$ESC[$BD;${MAGENTA}mThe structure of libft folder is about to change.${RESET}"
 	echo -e "$ESC[0;${BLACK}mNothing will change for you.${RESET}"
 
 	mkdir "$lib_subfolder"
 	for item in *; do
-		if [ "$item" != "$lib_subfolder" ] && [ "$item" != "$0" ]; then
+		if [ "$item" != "$lib_subfolder" ] && [ "$item" != "features.sh" ]; then
 			mv "$item" "$lib_subfolder"
 		fi
 	done
@@ -187,11 +187,16 @@ function add_ft_printf() {
 	cd .. || handle_error "Failed to navigate back to parent directory."
 	mv ./.temp/* ./ || handle_error "Failed to move printf source in current directory"
 	rm -rf ./.temp || handle_error "Failed to delete '.temp' directory"
-		
+	mv ./src ./ftprintf_src
+
+	sed -i "s/^SRC_DIR = src/$/SRC_DIR = ftprintf_src/" Makefile
+	sed -i "s/^OBJ_DIR = build/$/OBJ_DIR = ftprintf_obj/" Makefile
 	sed -i "s/^NAME = libftprintf.a$/NAME = libft.a/" Makefile
 	sed -i "s/^LIBFT = libft$/LIBFT = $lib_subfolder/" Makefile
 	if [ -d "$lib_subfolder/include" ]; then
-		sed -i '/^INCL_DIR = $(LIBFT)/ s|$(LIBFT)$|$(LIBFT)/include|' Makefile
+		mv "$lib_subfolder/include" ./
+		mv ft_printf.h ./include
+		sed -i '/^INCL_DIR = $(LIBFT)/ s|$(LIBFT)$|include|' Makefile
 	fi
 	echo -e "$ESC[0;${GREEN}mFt_printf added successfully !${RESET}"
 }

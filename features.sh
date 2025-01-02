@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
-#    Updated: 2025/01/02 13:52:23 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/02 13:55:07 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -168,7 +168,7 @@ function add_ft_printf() {
 
 	mkdir "$lib_subfolder"
 	for item in *; do
-		if [ "$item" != "$lib_subfolder" ]; then
+		if [ "$item" != "$lib_subfolder" ] && [ "$item" != "$0" ]; then
 			mv "$item" "$lib_subfolder"
 		fi
 	done

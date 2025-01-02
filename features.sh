@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
-#    Updated: 2024/12/23 01:41:49 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/02 13:18:51 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 
 #? Git repository adress
 GNL_GIT="git@github.com:samlzz/get_next_line.git"
-FT_PRINTF_GIT="git@sbi.com"
+FT_PRINTF_GIT="git@github.com:samlzz/ft_printf.git"
 
 #* ANSI color codes 
 # format: '$ESC[<style>;<color>m
@@ -162,19 +162,27 @@ handle_include_and_header() {
 }
 
 function add_ft_printf() {
-	echo -e "$ESC[0;${CYAN}mCloning ft_printf...$ESC[$IT;${BLACK}m"
-	git clone ${FT_PRINTF_GIT} || handle_error "Failed to clone ft_printf repository."
-	cd ft_printf || handle_error "Failed to navigate to ft_printf directory."
-	echo -e "$ESC[0;${YELLOW}mCleaning repository...${RESET}"
-	rm -rf .git Makefile .gitignore
-	mv src/* ./ || handle_error "Failed to move source files."
-	rm -rf src 
-	cd .. || handle_error "Failed to navigate back to parent directory."
-	handle_include_and_header "ft_printf/ft_printf.h" "ft_printf.h"
+	local lib_subfolder="ft_printflib_ft"
+	echo -e "$ESC[$BD;${MAGENTA}mThe structure of libft folder is about to change.${RESET}"
+	echo -e "$ESC[${IT};${WHITE}mNothing will change for you $ESC[${IT}except$ESC[${IT}m the name of archive.$ESC[${IT};${MAGENTA}m (libft.a => libftprintf.a)${RESET}"
 
-	find ft_printf -name '*.c' -exec basename {} \; | while read -r file; do
-		sed -i "/^C_FILES =/a \ $(printf '\t\t\t')ft_printf/${file}$(printf '\t')\\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
+	mkdir "$lib_subfolder"
+	for item in *; do
+		if [ "$item" != "$lib_subfolder" ]; then
+			mv "$item" "$lib_subfolder"
+		fi
 	done
+	echo -e "$ESC[0;${CYAN}mCloning ft_printf...$ESC[$IT;${BLACK}m"
+	if [ -d ".git" ]; then
+  		handle_error "A git repository already exists in the current directory."
+	fi
+	git clone ${FT_PRINTF_GIT} ./ || handle_error "Failed to clone ft_printf repository."
+	echo -e "$ESC[0;${YELLOW}mCleaning repository...${RESET}"
+	rm -rf .git .gitignore
+	if [ -d "libft" ]; then
+		rm -r libft || handle_error "Failed to delete libft folder of printf"
+	fi
+	sed -i "s/^LIBFT = libft$/LIBFT = $lib_subfolder/" "Makefile"
 	echo -e "$ESC[0;${GREEN}mFt_printf added successfully !${RESET}"
 }
 
@@ -261,13 +269,19 @@ MENU "${options[@]}"
 clear
 
 if display_and_confirm "${options[@]}"; then
+    has_add_ft_printf=false
+
     for i in "${SELECTED_OPTIONS[@]}"; do
         case $i in
             0) compile_bonuses ;;
-            1) add_ft_printf ;;
+            1) has_add_ft_printf=true ;;
             2) add_gnl ;;
         esac
     done
+    if $has_add_ft_printf; then
+        add_ft_printf
+    fi
+
 else
     echo -e "$ESC[0;${CYAN}mNo actions were performed.${RESET}"
 	exit 0

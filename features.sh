@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
-#    Updated: 2025/01/02 14:26:56 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/02 14:48:37 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -187,16 +187,19 @@ function add_ft_printf() {
 	cd .. || handle_error "Failed to navigate back to parent directory."
 	mv ./.temp/* ./ || handle_error "Failed to move printf source in current directory"
 	rm -rf ./.temp || handle_error "Failed to delete '.temp' directory"
-	mv ./src ./ftprintf_src
+	mv ./src ./ftprintf_src || handle_error "Failed to rename printf 'src' directory"
 
-	sed -i "s/^SRC_DIR = src/$/SRC_DIR = ftprintf_src/" Makefile
-	sed -i "s/^OBJ_DIR = build/$/OBJ_DIR = ftprintf_obj/" Makefile
-	sed -i "s/^NAME = libftprintf.a$/NAME = libft.a/" Makefile
-	sed -i "s/^LIBFT = libft$/LIBFT = $lib_subfolder/" Makefile
+	#? Edit SRC and OBJ DIR name for ftprintf
+	sed -i 's|^SRC_DIR *= *src/$|SRC_DIR = ftprintf_src/|' Makefile
+	sed -i 's|^OBJ_DIR *= *build/$|OBJ_DIR = ftprintf_obj/|' Makefile
+	#? Edit archive name
+	sed -i "s/^NAME *= *libftprintf.a$/NAME = libft.a/" Makefile
+	#sed -i "s/^LIBFT = libft$/LIBFT = $lib_subfolder/" Makefile
 	if [ -d "$lib_subfolder/include" ]; then
 		mv "$lib_subfolder/include" ./
-		mv ft_printf.h ./include
+		mv ftprintf_src/ft_printf.h ./include
 		sed -i '/^INCL_DIR = $(LIBFT)/ s|$(LIBFT)$|include|' Makefile
+		sed -i '/^INCL_DIR =  include/ s|include|../include|' "$lib_subfolder/Makefile"
 	fi
 	echo -e "$ESC[0;${GREEN}mFt_printf added successfully !${RESET}"
 }

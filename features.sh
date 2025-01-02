@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
-#    Updated: 2025/01/02 13:31:23 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/02 13:32:45 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -186,7 +186,8 @@ function add_ft_printf() {
 		rm -r libft || handle_error "Failed to delete libft folder of printf"
 	fi
 	cd .. || handle_error "Failed to navigate back to parent directory."
-	mv ./.temp/* ./
+	mv ./.temp/* ./ || handle_error "Failed to move printf source in current directory"
+	rm -rf ./.temp || handle_error "Failed to delete '.temp' directory"
 	
 	sed -i "s/^LIBFT = libft$/LIBFT = $lib_subfolder/" Makefile
 	if [ -d "$lib_subfolder/include"]; then

@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
-#    Updated: 2025/01/02 13:32:45 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/02 13:40:01 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -190,7 +190,7 @@ function add_ft_printf() {
 	rm -rf ./.temp || handle_error "Failed to delete '.temp' directory"
 	
 	sed -i "s/^LIBFT = libft$/LIBFT = $lib_subfolder/" Makefile
-	if [ -d "$lib_subfolder/include"]; then
+	if [ -d "$lib_subfolder/include" ]; then
 		sed -i '/^INCL_DIR = $(LIBFT)/ s/=\s*/= include\//' Makefile
 	fi
 	echo -e "$ESC[0;${GREEN}mFt_printf added successfully !${RESET}"

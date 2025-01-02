@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
-#    Updated: 2025/01/02 13:18:51 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/02 13:31:23 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -164,7 +164,8 @@ handle_include_and_header() {
 function add_ft_printf() {
 	local lib_subfolder="ft_printflib_ft"
 	echo -e "$ESC[$BD;${MAGENTA}mThe structure of libft folder is about to change.${RESET}"
-	echo -e "$ESC[${IT};${WHITE}mNothing will change for you $ESC[${IT}except$ESC[${IT}m the name of archive.$ESC[${IT};${MAGENTA}m (libft.a => libftprintf.a)${RESET}"
+	echo -e "$ESC[$IT;${WHITE}mNothing will change for you $ESC[${BD}mexcept$ESC[${IT}m the name of archive.$ESC[${BD};${MAGENTA}m (libft.a => libftprintf.a)${RESET}"
+	echo -e "$ESC[$BD;${YELLOW}mDo not forget to update LIBFT var in your Makefile !$RESET"
 
 	mkdir "$lib_subfolder"
 	for item in *; do
@@ -176,13 +177,21 @@ function add_ft_printf() {
 	if [ -d ".git" ]; then
   		handle_error "A git repository already exists in the current directory."
 	fi
-	git clone ${FT_PRINTF_GIT} ./ || handle_error "Failed to clone ft_printf repository."
+	git clone ${FT_PRINTF_GIT} ./.temp || handle_error "Failed to clone ft_printf repository."
+	
 	echo -e "$ESC[0;${YELLOW}mCleaning repository...${RESET}"
+	cd .temp || handle_error "Failed to navigate to cloned directory."
 	rm -rf .git .gitignore
 	if [ -d "libft" ]; then
 		rm -r libft || handle_error "Failed to delete libft folder of printf"
 	fi
-	sed -i "s/^LIBFT = libft$/LIBFT = $lib_subfolder/" "Makefile"
+	cd .. || handle_error "Failed to navigate back to parent directory."
+	mv ./.temp/* ./
+	
+	sed -i "s/^LIBFT = libft$/LIBFT = $lib_subfolder/" Makefile
+	if [ -d "$lib_subfolder/include"]; then
+		sed -i '/^INCL_DIR = $(LIBFT)/ s/=\s*/= include\//' Makefile
+	fi
 	echo -e "$ESC[0;${GREEN}mFt_printf added successfully !${RESET}"
 }
 

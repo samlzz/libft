@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
-#    Updated: 2025/01/02 14:48:37 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/02 15:07:13 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -309,4 +309,5 @@ echo ""
 echo -e "$ESC[$BD;${GREEN}mScript completed !${RESET}"
 echo -e "$ESC[0;${MAGENTA}mPlease run '$ESC[${BD}mnorminette$ESC[22m' to verify compliance.${RESET}"
 echo -e "$ESC[0;${RED}mThis script will now delete itself.${RESET}"
+cd .. || handle_error "Failed to navigate back to parent directory."
 rm -- "$0"

@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/23 01:03:17 by sliziard          #+#    #+#              #
-#    Updated: 2025/01/02 15:07:13 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/04 12:54:20 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -197,10 +197,14 @@ function add_ft_printf() {
 	#sed -i "s/^LIBFT = libft$/LIBFT = $lib_subfolder/" Makefile
 	if [ -d "$lib_subfolder/include" ]; then
 		mv "$lib_subfolder/include" ./
-		mv ftprintf_src/ft_printf.h ./include
-		sed -i '/^INCL_DIR = $(LIBFT)/ s|$(LIBFT)$|include|' Makefile
-		sed -i '/^INCL_DIR =  include/ s|include|../include|' "$lib_subfolder/Makefile"
+	else
+		mkdir include
+		mv "$lib_subfolder/libft.h" ./include
 	fi
+	mv ftprintf_src/ft_printf.h ./include
+	sed -i '/^INCL_DIR = $(LIBFT)/ s|$(LIBFT)$|include|' Makefile
+	sed -i '/^INCL_DIR =  include/ s|include|../include|' "$lib_subfolder/Makefile"
+
 	echo -e "$ESC[0;${GREEN}mFt_printf added successfully !${RESET}"
 }
 

@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:54:22 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/08 19:31:32 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:25:28 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
  */
 typedef struct s_mem
 {
-	char	*content; /**< Pointer to the content. */
-	size_t	size; /**< Size of the content. */
+	char	*content;
+	size_t	size;
 }	t_mem;
 
 //* ft_is

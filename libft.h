@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:54:22 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/09 15:25:28 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/13 12:20:21 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -386,8 +386,8 @@ void			ft_putnbr_fd(int n, int fd);
  */
 typedef struct s_list
 {
-	void			*content; /**< Pointer to the content of the node. */
-	struct s_list	*next; /**< Pointer to the next node. */
+	void			*content;
+	struct s_list	*next;
 }	t_list;
 
 /**

@@ -1,43 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_conversion.c                                    :+:      :+:    :+:   */
+/*   ft_convert_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/04 15:20:37 by sliziard          #+#    #+#             */
-/*   Updated: 2024/11/12 09:46:13 by sliziard         ###   ########.fr       */
+/*   Created: 2025/01/20 14:33:50 by sliziard          #+#    #+#             */
+/*   Updated: 2025/01/20 15:15:43 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft_internal.h"
 #include <stdlib.h>
-#include <limits.h>
 
-int	ft_atoi(const char *nptr)
-{
-	int	r;
-	int	s;
-
-	r = 0;
-	s = 1;
-	while ((*nptr < 14 && *nptr > 8) || *nptr == ' ')
-		nptr++;
-	if (*nptr == '-' || *nptr == '+')
-	{
-		if (*nptr == '-')
-			s = -1;
-		nptr++;
-	}
-	while (*nptr >= '0' && *nptr <= '9' && *nptr)
-	{
-		r = (r * 10) + *nptr - '0';
-		nptr++;
-	}
-	return (r * s);
-}
-
-static void	nb_to_astr(long nb, t_mem *dest, char *base, size_t b_len)
+void	_nb_to_asciistr(long nb, t_mem *dest, char *base, size_t b_len)
 {
 	dest->content[dest->size] = '\0';
 	if (nb == 0)
@@ -57,7 +33,7 @@ static void	nb_to_astr(long nb, t_mem *dest, char *base, size_t b_len)
 	}
 }
 
-static t_mem	*init_dest(long n, size_t base_l)
+t_mem	*_init_dest_to_convert(long n, size_t base_l)
 {
 	t_mem	*dest;
 
@@ -85,17 +61,29 @@ static t_mem	*init_dest(long n, size_t base_l)
 	return (dest);
 }
 
-//* INT
-char	*ft_itoa(int n)
+bool	ft_valid_base(char *base, size_t *len)
 {
-	t_mem	*dest;
-	char	*n_in_base10;
+	size_t	i;
+	size_t	j;
 
-	dest = init_dest((long)n, 10);
-	if (!dest)
-		return (NULL);
-	nb_to_astr((long)n, dest, "0123456789", 10);
-	n_in_base10 = dest->content;
-	free(dest);
-	return (n_in_base10);
+	if (!base)
+		return (false);
+	i = 0;
+	while (base[i])
+	{
+		if (base[i] == '-' || base[i] == '+' || base[i] <= ' ')
+			return (false);
+		j = i + 1;
+		while (base[j])
+		{
+			if (base[i] == base[j])
+				return (false);
+			j++;
+		}
+		i++;
+	}
+	if (i < 2)
+		return (false);
+	*len = i;
+	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:26:15 by sliziard          #+#    #+#             */
-/*   Updated: 2024/11/13 18:15:10 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/20 15:08:52 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,17 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-static size_t	ft_count_words(const char *s, char separator)
+void	ft_splitfree(char **splited, size_t end)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < end)
+		free(splited[i++]);
+	free(splited);
+}
+
+static size_t	_count_words(const char *s, char separator)
 {
 	size_t	i;
 	size_t	count;
@@ -35,20 +45,7 @@ static size_t	ft_count_words(const char *s, char separator)
 	return (count);
 }
 
-static void	ft_free_strtab(char **tab, size_t end)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < end)
-	{
-		free(tab[i]);
-		i++;
-	}
-	free(tab);
-}
-
-static bool	ft_get_substr(char const *src, char c, size_t *start, char **substr)
+static bool	_get_substr(char const *src, char c, size_t *start, char **substr)
 {
 	char	*tmp;
 	size_t	end;
@@ -82,7 +79,7 @@ char	**ft_split(char const *s, char c)
 
 	if (!s)
 		return (NULL);
-	word_c = ft_count_words(s, c);
+	word_c = _count_words(s, c);
 	tab = malloc(sizeof (char *) * (word_c + 1));
 	if (!tab)
 		return (NULL);
@@ -90,10 +87,10 @@ char	**ft_split(char const *s, char c)
 	i = 0;
 	while (s[i] && j < word_c)
 	{
-		if (ft_get_substr(s, c, &i, &str))
+		if (_get_substr(s, c, &i, &str))
 			tab[j++] = str;
 		else
-			return (ft_free_strtab(tab, j), NULL);
+			return (ft_splitfree(tab, j), NULL);
 	}
 	tab[j] = NULL;
 	return (tab);

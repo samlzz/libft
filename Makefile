@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/05 19:03:59 by sliziard          #+#    #+#              #
-#    Updated: 2024/12/02 11:45:56 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/20 15:14:22 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,15 +24,17 @@ RM = rm -f
 MD = mkdir -p
 AR = ar rcs
 
-C_FILES =	ft_char.c		\
-			ft_conversion.c	\
-			ft_is.c 		\
-			ft_mem.c 		\
-			ft_output.c		\
-			ft_split.c		\
-			ft_str_alloc.c	\
-			ft_str_iter.c	\
-			ft_str.c		\
+C_FILES =	ft_char.c			\
+			ft_convert_utils.c	\
+			ft_convert.c		\
+			ft_convert_base.c	\
+			ft_is.c 			\
+			ft_mem.c 			\
+			ft_output.c			\
+			ft_split.c			\
+			ft_str_alloc.c		\
+			ft_str_iter.c		\
+			ft_str.c			\
 			ft_utils.c
 			
 BONUS_SRC =	ft_lst_edit_bonus.c	\

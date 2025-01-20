@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:26:27 by sliziard          #+#    #+#             */
-/*   Updated: 2024/11/12 17:22:17 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/20 15:06:10 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	ft_putendl_fd(char *s, int fd)
 	}
 }
 
-static void	recurs_putnbr_fd(long n, int fd)
+static void	_recurs_putnbr_fd(long n, int fd)
 {
 	if (n < 0)
 	{
@@ -57,7 +57,7 @@ static void	recurs_putnbr_fd(long n, int fd)
 		n = -n;
 	}
 	if (n >= PUTNBR_BASE)
-		recurs_putnbr_fd(n / PUTNBR_BASE, fd);
+		_recurs_putnbr_fd(n / PUTNBR_BASE, fd);
 	ft_putchar_fd((n % PUTNBR_BASE) + '0', fd);
 }
 
@@ -65,5 +65,5 @@ void	ft_putnbr_fd(int n, int fd)
 {
 	if (fd < 0)
 		return ;
-	recurs_putnbr_fd((long)n, fd);
+	_recurs_putnbr_fd((long)n, fd);
 }

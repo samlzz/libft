@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:15:55 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/20 17:18:24 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/20 17:49:56 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,25 @@ void	*ft_calloc(size_t nmemb, size_t size)
 		return (NULL);
 	ft_bzero(ptr, alloc_s);
 	return (ptr);
+}
+
+void	*ft_realloc(void *ptr, size_t og_size, size_t new_size)
+{
+	void	*new_ptr;
+
+	new_ptr = NULL;
+	if (new_size)
+	{
+		new_ptr = malloc(new_size);
+		if (!new_ptr || !ptr)
+			return (new_ptr);
+		if (new_size < og_size)
+			ft_memcpy(new_ptr, ptr, new_size);
+		else
+			ft_memcpy(new_ptr, ptr, og_size);
+	}
+	free(ptr);
+	return (new_ptr);
 }
 
 inline unsigned int	ft_abs(int value)

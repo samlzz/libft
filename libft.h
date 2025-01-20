@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:54:22 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/20 17:45:36 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/20 17:52:22 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,8 @@ int				ft_memcmp(const void *s1, const void *s2, size_t n)
 void			ft_bzero(void *s, size_t n) __attribute__ ((nonnull(1)));
 void			*ft_calloc(size_t nmemb, size_t size)
 				__attribute__ ((warn_unused_result, alloc_size(1, 2)));
+void			*ft_realloc(void *ptr, size_t og_size, size_t new_size)
+				__attribute__ ((warn_unused_result, alloc_size(3)));
 unsigned int	ft_abs(int value) __attribute__ ((const));
 
 //* ft_convert

@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:23:13 by sliziard          #+#    #+#             */
-/*   Updated: 2024/11/12 19:39:15 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/20 16:21:52 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 
 	if (!n)
 		return (dest);
-	if (!dest && !src)
-		return (NULL);
 	i = 0;
 	while (i < n)
 	{
@@ -46,8 +44,6 @@ void	*ft_memmove(void *dest, const void *src, size_t n)
 {
 	if (!n)
 		return (dest);
-	if (!dest && !src)
-		return (NULL);
 	if (dest < src)
 		return (ft_memcpy(dest, src, n));
 	while (n--)

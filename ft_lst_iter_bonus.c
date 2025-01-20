@@ -6,13 +6,13 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 12:11:04 by sliziard          #+#    #+#             */
-/*   Updated: 2024/12/16 12:48:02 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/20 17:42:39 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstiter(t_list *lst, void (*f)(void *))
+void	ft_lstiter(t_list *lst, t_lst_f f)
 {
 	t_list	*first;
 

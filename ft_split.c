@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:26:15 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/20 15:08:52 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/20 16:22:18 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,6 @@ char	**ft_split(char const *s, char c)
 	size_t	i;
 	size_t	j;
 
-	if (!s)
-		return (NULL);
 	word_c = _count_words(s, c);
 	tab = malloc(sizeof (char *) * (word_c + 1));
 	if (!tab)

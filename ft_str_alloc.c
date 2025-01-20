@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:25:53 by sliziard          #+#    #+#             */
-/*   Updated: 2024/11/12 16:25:43 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/20 16:22:38 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,6 @@ char	*ft_strtrim(char const *s1, char const *set)
 	size_t	s;
 	size_t	end;
 
-	if (!s1 || !set)
-		return (NULL);
 	s = 0;
 	while (s1[s] && ft_strchr(set, (int)s1[s]))
 		s++;

@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/05 19:03:59 by sliziard          #+#    #+#              #
-#    Updated: 2025/01/20 15:14:22 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/20 15:22:29 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ SRC_DIR =
 OBJ_DIR =
 INCL_DIR = 
 
-CC = cc
+CC = gcc
 CFLAGS := -Wall -Wextra -Werror
 RM = rm -f
 MD = mkdir -p

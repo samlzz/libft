@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:15:55 by sliziard          #+#    #+#             */
-/*   Updated: 2024/12/16 12:40:08 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/20 17:18:24 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (ptr);
 }
 
-unsigned int	ft_abs(int value)
+inline unsigned int	ft_abs(int value)
 {
 	if (value < 0)
 		return (-value);

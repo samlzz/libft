@@ -6,12 +6,11 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:26:27 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/20 15:06:10 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/20 15:20:53 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
-#include <stdlib.h>
 #include "libft.h"
 
 #define PUTNBR_BASE 10
@@ -32,21 +31,10 @@ void	ft_putstr_fd(char *s, int fd)
 
 void	ft_putendl_fd(char *s, int fd)
 {
-	char	*endl;
-
 	if (fd < 0)
 		return ;
-	endl = ft_strjoin(s, "\n");
-	if (endl)
-	{
-		ft_putstr_fd(endl, fd);
-		free(endl);
-	}
-	else
-	{
-		ft_putstr_fd(s, fd);
-		write(fd, "\n", 1);
-	}
+	ft_putstr_fd(s, fd);
+	write(fd, "\n", 1);
 }
 
 static void	_recurs_putnbr_fd(long n, int fd)

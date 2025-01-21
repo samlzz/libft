@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:15:55 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/20 17:49:56 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/21 14:42:43 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,9 @@ void	*ft_realloc(void *ptr, size_t og_size, size_t new_size)
 		if (!new_ptr || !ptr)
 			return (new_ptr);
 		if (new_size < og_size)
-			ft_memcpy(new_ptr, ptr, new_size);
+			ft_memmove(new_ptr, ptr, new_size);
 		else
-			ft_memcpy(new_ptr, ptr, og_size);
+			ft_memmove(new_ptr, ptr, og_size);
 	}
 	free(ptr);
 	return (new_ptr);

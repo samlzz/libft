@@ -237,6 +237,7 @@ add_gnl()
 	handle_git_clone "$GNL_GIT" "get_next_line" "get_next_line"
 
 	find get_next_line -type f ! -name "get_next_line*" -delete || handle_error "Failed to clean repo"
+	rm -rf get_next_line/.git
 	for header in get_next_line/*.h; do
 		if [[ -f "$header" ]]; then
 			mv "$header" ./ || handle_error "Failed to move .h file"
@@ -245,9 +246,10 @@ add_gnl()
 	check_incldir
 	for file in get_next_line/*c; do
 		if [[ -f "$file" ]]; then
-			sed -i "/^C_FILES =/a \ $(printf '\t\t\t')get_next_line/$file \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
+			sed -i "/^C_FILES =/a \ $(printf '\t\t\t')$file \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
 		fi
 	done
+	echo -e "$ESC[0;${GREEN}mGnl added successfully !${RESET}"
 }
 
 navigate_to_libft() {

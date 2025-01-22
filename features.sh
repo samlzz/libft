@@ -160,9 +160,6 @@ check_incldir()
 				mv "$file" "include/" || handle_error "Failed to move header file of $(pwd)/$dir"
 			fi
 		done
-		if [[ -f "Makefile" ]]; then
-			sed -i '/^INCL_DIR =/ s/$/ include/' Makefile || handle_error "Failed to update INCL_DIR in Makefile"
-		fi
 	fi
 }
 
@@ -209,27 +206,29 @@ add_ftprintfs()
 	handle_git_clone "$FT_PRINTF_GIT" "$tmp_dir" "ft_printf"
 	mv "$tmp_dir/src" "./$src" || handle_error "Failed to move printf srcs"
 	mv "$tmp_dir/Makefile" ./ || handle_error "Failed to move printf Makefile"
-	rm -rf "$tmp_dir" || handle_error "Failed to delete temp file"
+	rm -rf "$tmp_dir" || handle_error "Failed to delete temp directory"
 
 	#? Edit SRC and OBJ DIR name for ftprintf
 	sed -i "s|^SRC_DIR *= *src/$|SRC_DIR = $src/|" Makefile || handle_error "Failed to update SRC_DIR"
 	sed -i 's|^OBJ_DIR *= *build/$|OBJ_DIR = ftprintf_obj/|' Makefile || handle_error "Failed to update OBJ_DIR"
 
+	#? Move .h files and update INCL_DIR (for both libft and printf)
+	sed -i '/^INCL_DIR *= *$(LIBFT)/ s|$(LIBFT)|include|' Makefile || handle_error "Failed to update INCL_DIR"
 	local fold=
 	if [ -d "libft/include" ]; then
 		mv libft/include ./ || handle_error "Failed to move libft/include"
+		sed -i '/^INCL_DIR *= *include/ s|include| ../include|' libft/Makefile || handle_error "Failed to update INCL_DIR in libft/Makefile"
 		fold="$src"
-		sed -i '/^INCL_DIR *= *$(LIBFT)/ s|$(LIBFT)|include|' Makefile || handle_error "Failed to update INCL_DIR"
 	else
 		check_incldir "$src"
 		fold="libft"
+		sed -i '/^INCL_DIR *=/ s|$| ../include|' libft/Makefile || handle_error "Failed to update INCL_DIR in libft/Makefile"
 	fi
 	for header in $fold/*.h; do
 		if [[ -f "$header" ]]; then
 			mv "$header" "include/" || handle_error "Failed to move header file of $fold"
 		fi
 	done
-	sed -i '/^INCL_DIR =/ s/$/ ../include/' "libft/Makefile" || handle_error "Failed to update INCL_DIR in libft/Makefile"
 
 	echo -e "$ESC[0;${GREEN}mFt_printf added successfully !${RESET}"
 	echo -e "$ESC[$BD;${MAGENTA}mThe name of libft folder is now plibft, don't forget to change it in your project.${RESET}"
@@ -253,6 +252,7 @@ add_gnl()
 		fi
 	done
 	check_incldir
+	sed -i '/^INCL_DIR =/ s/$/ include/' Makefile || handle_error "Failed to update INCL_DIR in Makefile"
 	for file in get_next_line/*c; do
 		if [[ -f "$file" ]]; then
 			sed -i "/^C_FILES =/a \ $(printf '\t\t\t')$file \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."

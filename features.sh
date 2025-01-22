@@ -173,6 +173,22 @@ compile_bonuses() {
 }
 
 # renommer le dossier actuel (libft) en plibft
+create_plibft()
+{
+	local new_libname="$1"
+
+	echo -e "$ESC[$BD;${MAGENTA}mThe structure of libft folder is about to change.${RESET}"
+
+	mkdir "../$new_libname" || handle_error "Failed to create $new_libname folder."
+	mkdir "../$new_libname/libft" || handle_error "Failed to create $new_libname/libft folder."
+	for item in *; do
+		if [[ "$item" != "$(basename "$0")" ]]; then
+			mv "$item" "../$new_libname/libft/" || handle_error "Failed to move $item to $new_libname/libft."
+		fi
+	done
+	cd "../$new_libname"
+}
+
 # creer un dossier `libft` (dans plibft)
 # deplacer toutes les fichiers du dossier courant dans le dossier lifbt (sauf lui meme et features.sh (ce script))
 # cloner dans /tmp/.libft_features/ft_printf
@@ -189,14 +205,7 @@ add_ftprintfs()
 	local tmp_dir="/tmp/.libft_features/ft_printf"
 	local src="ftprintf_src"
 
-	echo -e "$ESC[$BD;${MAGENTA}mThe structure of libft folder is about to change.${RESET}"
-	mv . plibft || handle_error "Failed to rename current folder"
-	mkdir libft || handle_error "Failed to create a subfolder"
-	for item in *; do
-		if [ "$item" != "libft" ] && [ "$item" != "features.sh" ]; then
-			mv "$item" "libft" || handle_error "Failed to move $item "
-		fi
-	done
+	create_plibft plibft
 	handle_git_clone "$FT_PRINTF_GIT" "$tmp_dir" "ft_printf"
 	mv "$tmp_dir/src" "./$src" || handle_error "Failed to move printf srcs"
 	mv "$tmp_dir/Makefile" ./ || handle_error "Failed to move printf Makefile"

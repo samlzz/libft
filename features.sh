@@ -275,7 +275,7 @@ add_gnl()
 		fi
 	done
 
-	sed -i '/^# include "libft_internal.h"/a \# include "get_next_line.h"' || handle_error "Failed to include gnl header"
+	sed -i '/^# include "libft_internal.h"/a \# include "get_next_line.h"' include/libft.h || handle_error "Failed to include gnl header"
 	echo -e "$ESC[0;${GREEN}mGnl added successfully !${RESET}"
 }
 

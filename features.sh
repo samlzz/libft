@@ -209,7 +209,7 @@ add_ftprintfs()
 	local tmp_dir="/tmp/.libft_features/ft_printf"
 	local src="ftprintf_src"
 
-	create_plibft plibft
+	create_plibft libftp
 	handle_git_clone "$FT_PRINTF_GIT" "$tmp_dir" "ft_printf"
 	mv "$tmp_dir/src" "./$src" || handle_error "Failed to move printf srcs"
 	mv "$tmp_dir/Makefile" ./ || handle_error "Failed to move printf Makefile"
@@ -230,8 +230,27 @@ add_ftprintfs()
 	check_incldir "$src"
 	sed -i '/^INCL_DIR *= *$(LIBFT)/ s|$(LIBFT)|include|' Makefile || handle_error "Failed to update INCL_DIR"
 
+	#? Change lib name in Makefile of curr project
+	local makefile="../Makefile"
+	sed_and_warn()
+	{
+		local var="$1"
+		local value="$2"
+		local expected="${value}p"
+		
+		if ! sed -i "/^$var *=/ s|$value|$expected|" "$makefile"; then
+			echo -e "$ESC[$BD;${YELLOW}mWarning$ESC[0;${YELLOW}m failed to update $ESC[$BD;${YELLOW}m${var}$ESC[0;${YELLOW}m to $ESC[$UD;${YELLOW}m${expected}$ESC[0;${YELLOW}m in the Makefile."
+			echo -e "$ESC[0;${MAGENTA}mPlease update it manually.$RESET"
+			return 1
+		fi
+		return 0
+	}
+	if sed_and_warn LIBFT libft; then
+		sed_and_warn LIB_FILES ft
+	fi
+
 	echo -e "$ESC[0;${GREEN}mFt_printf added successfully !${RESET}"
-	echo -e "$ESC[$BD;${MAGENTA}mThe name of libft folder is now plibft, don't forget to change it in your project.${RESET}"
+	echo -e "$ESC[$BD;${MAGENTA}mThe name of libft folder and archive is now libftp.${RESET}"
 }
 
 # cloner dans get_next_line

@@ -332,7 +332,7 @@ if display_and_confirm "${options[@]}"; then
         esac
     done
     if $has_add_ft_printf; then
-        add_ft_printf
+        add_ftprintfs
     fi
 else
     echo -e "$ESC[0;${CYAN}mNo actions were performed.${RESET}"

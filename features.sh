@@ -140,6 +140,14 @@ handle_git_clone()
 	echo -e "$ESC[0;${YELLOW}mCleaning repository...${RESET}"
 }
 
+delete_if_empty() {
+    local dir="$1"
+
+    if [ -d "$dir" ] && [ -z "$(ls -A "$dir")" ]; then
+        rmdir "$dir"
+    fi
+}
+
 # function ()
 # verifier si un dossier include existe dans libft (le dossier courant)
 # si il n'existe ne pas
@@ -259,10 +267,9 @@ navigate_to_libft() {
 	LIBFT_PATH=$(find . -type d -name "libft" -print -quit)
 
 	if [[ -n "$LIBFT_PATH" ]]; then
-		cd "$LIBFT_PATH" || { echo -e "${RED}Error: Failed to navigate to $LIBFT_PATH."; exit 1; }
+		cd "$LIBFT_PATH" || handle_error "Failed to navigate to $LIBFT_PATH."
 	else
-		echo -e "${RED}Error: 'libft' directory not found."
-		exit 1
+		handle_error "'libft' directory not found."
 	fi
 }
 
@@ -346,3 +353,4 @@ echo -en "$ESC[0;${RED}mDelete the script itself? (Y/n):${RESET}"
 read -r -p ' > ' confirm
 confirm=${confirm:-y}
 [[ $confirm =~ ^[Yy]$ ]] && rm -- "$0"
+delete_if_empty libft

@@ -144,7 +144,6 @@ handle_git_clone()
 # verifier si un dossier include existe dans libft (le dossier courant)
 # si il n'existe ne pas
 #		le creer et deplacer tout les fichiers .h dedans
-#		modifier le Makefile pour ajouter 'include' apres 'INCL_DIR = '
 # sinon ne rien faire
 check_incldir()
 {
@@ -156,7 +155,7 @@ check_incldir()
 	if [ ! -d "include" ]; then
 		mkdir "include" || handle_error "Failed to create include dir in $(pwd)"
 		for file in $dir/*.h; do
-			if [[ -f "$dir/$file" ]]; then
+			if [[ -f "$file" ]]; then
 				mv "$file" "include/" || handle_error "Failed to move header file of $(pwd)/$dir"
 			fi
 		done

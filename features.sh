@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#? Git repository adress
+# Git repository adress
 GNL_GIT="git@github.com:samlzz/get_next_line.git"
 FT_PRINTF_GIT="git@github.com:samlzz/ft_printf.git"
 
@@ -39,24 +39,6 @@ BRIGHT()
 
 #* Functions
 
-handle_error() {
-    local message="$1"
-
-    echo -e "$RESET$ESC[$BD;91mError:$ESC[22m ${message}${RESET}" >&2
-    exit 1
-}
-
-is_contains_others() {
-    local selected="$1"
-    local options=("${!2}")
-    for option in "${options[@]}"; do
-        if [[ "$option" -ne "$selected" ]]; then
-            return 0
-        fi
-    done
-    return 1
-}
-
 MENU() {
 	local indicator="$ESC[$BD;${YELLOW}m<"
 	options=("$@")
@@ -64,6 +46,17 @@ MENU() {
 	local quit_selected=0
 	SELECTED=0
 	SELECTED_OPTIONS=()
+
+	is_contains_others() {
+		local selected="$1"
+		local options=("${!2}")
+		for option in "${options[@]}"; do
+			if [[ "$option" -ne "$selected" ]]; then
+				return 0
+			fi
+		done
+		return 1
+	}
 
 	print_menu() {
 		HILIGHT="$ESC[$UD;$(BRIGHT $CYAN)m"
@@ -93,7 +86,7 @@ MENU() {
 	}
 
     print_menu
-
+	stty -icanon -echo
 	while IFS="" read -r -s -n 1 c; do
 		case $c in
 			"A")
@@ -124,92 +117,137 @@ MENU() {
 		esac
 		print_menu
 	done
+	stty sane
 
     echo "${SELECTED_OPTIONS[@]}"
 }
 
-function compile_bonuses() {
+handle_error() {
+    local message="$1"
+
+    echo -e "$RESET$ESC[$BD;91mError:$ESC[22m ${message}${RESET}" >&2
+    exit 1
+}
+
+handle_git_clone()
+{
+	local repo="$1"
+	local path="$2"
+	local name="$3"
+
+	echo -e "$ESC[0;${CYAN}mCloning $name...$ESC[$IT;${BLACK}m"
+	git clone $repo $path || handle_error "Failed to clone $name repository."
+	echo -e "$ESC[0;${YELLOW}mCleaning repository...${RESET}"
+}
+
+# function ()
+# verifier si un dossier include existe dans libft (le dossier courant)
+# si il n'existe ne pas
+#		le creer et deplacer tout les fichiers .h dedans
+#		modifier le Makefile pour ajouter 'include' apres 'INCL_DIR = '
+# sinon ne rien faire
+check_incldir()
+{
+	local dir="$1"
+
+	if [[ -z "$dir" ]]; then
+		dir="."
+	fi
+	if [ ! -d "include" ]; then
+		mkdir "include" || handle_error "Failed to create include dir in $(pwd)"
+		for file in $dir/*.h; do
+			if [[ -f "$dir/$file" ]]; then
+				mv "$file" "include/" || handle_error "Failed to move header file of $(pwd)/$dir"
+			fi
+		done
+		if [[ -f "Makefile" ]]; then
+			sed -i '/^INCL_DIR =/ s/$/ include/' Makefile || handle_error "Failed to update INCL_DIR in Makefile"
+		fi
+	fi
+}
+
+
+compile_bonuses() {
 	sed -i "/^all:.*\$(NAME)/ s/$/ bonus/" Makefile || handle_error "Failed to update Makefile for auto-compil bonuses."
 	echo -e "$ESC[0;${GREEN}mBonuses will be compiled automatically !${RESET}"
 }
 
-handle_include_and_header() {
-	local header_path="$1"
-	local header_name="$2"
+# renommer le dossier actuel (libft) en plibft
+# creer un dossier `libft` (dans plibft)
+# deplacer toutes les fichiers du dossier courant dans le dossier lifbt (sauf lui meme et features.sh (ce script))
+# cloner dans /tmp/.libft_features/ft_printf
+# deplacer le dossier src et le fichier Makefile depuis le dossier du repos vers le dossier courant
+# renommer le dossier src en ftprintfs_src
+# modifier SRC_DIR et OBJ_DIR dans le Makefile
+# deplacer le dossier libft/include dans le dossier courant
+# modifier 'INCL_DIR = ' dans libft/Makefile, remplacer 'include' par ''../include'
+# deplacer tout les .h dans le dossier include
+# modifier 'INCL_DIR = $(LIBFT)' dans Makefile par 'INCL_DIR = include'
+# afficher en magenta que le nom de la lib (.a et dossier) a changé en plibft
+add_ftprintfs()
+{	
+	local tmp_dir="/tmp/.libft_features/ft_printf"
+	local src="ftprintf_src"
 
-	if [ ! -d "include" ]; then
-		echo -e "$ESC[0;$(BRIGHT $YELLOW)mCreating 'include' directory...${RESET}"
-		mkdir include || handle_error "Failed to create 'include' directory."
-		mv libft.h include/ || handle_error "Failed to move 'libft.h' to 'include'."
-		sed -i '/^INCL_DIR =/ s/$/ include/' Makefile || handle_error "Failed to update 'INCL_DIR' in Makefile."
-	fi
-
-	mv "$header_path" include/ || handle_error "Failed to move '$header_path'."
-	sed -i "/# include <stddef.h>/ a # include \"${header_name}\"" include/libft.h || handle_error "Failed to update 'libft.h'."
-	echo -e "$ESC[2;${GREEN}m'libft.h' was moved."
-}
-
-function add_ft_printf() {
-	local lib_subfolder="libft"
 	echo -e "$ESC[$BD;${MAGENTA}mThe structure of libft folder is about to change.${RESET}"
-	echo -e "$ESC[0;${BLACK}mNothing will change for you.${RESET}"
-
-	mkdir "$lib_subfolder"
+	mv . plibft || handle_error "Failed to rename current folder"
+	mkdir libft || handle_error "Failed to create a subfolder"
 	for item in *; do
-		if [ "$item" != "$lib_subfolder" ] && [ "$item" != "features.sh" ]; then
-			mv "$item" "$lib_subfolder"
+		if [ "$item" != "libft" ] && [ "$item" != "features.sh" ]; then
+			mv "$item" "libft" || handle_error "Failed to move $item "
 		fi
 	done
-	echo -e "$ESC[0;${CYAN}mCloning ft_printf...$ESC[$IT;${BLACK}m"
-	if [ -d ".git" ]; then
-  		handle_error "A git repository already exists in the current directory."
-	fi
-	git clone ${FT_PRINTF_GIT} ./.temp || handle_error "Failed to clone ft_printf repository."
-	
-	echo -e "$ESC[0;${YELLOW}mCleaning repository...${RESET}"
-	cd .temp || handle_error "Failed to navigate to cloned directory."
-	rm -rf .git .gitignore
-	if [ -d "libft" ]; then
-		rm -r libft || handle_error "Failed to delete libft folder of printf"
-	fi
-	cd .. || handle_error "Failed to navigate back to parent directory."
-	mv ./.temp/* ./ || handle_error "Failed to move printf source in current directory"
-	rm -rf ./.temp || handle_error "Failed to delete '.temp' directory"
-	mv ./src ./ftprintf_src || handle_error "Failed to rename printf 'src' directory"
+	handle_git_clone "$FT_PRINTF_GIT" "$tmp_dir" "ft_printf"
+	mv "$tmp_dir/src" "./$src" || handle_error "Failed to move printf srcs"
+	mv "$tmp_dir/Makefile" ./ || handle_error "Failed to move printf Makefile"
+	rm -rf "$tmp_dir" || handle_error "Failed to delete temp file"
 
 	#? Edit SRC and OBJ DIR name for ftprintf
-	sed -i 's|^SRC_DIR *= *src/$|SRC_DIR = ftprintf_src/|' Makefile
-	sed -i 's|^OBJ_DIR *= *build/$|OBJ_DIR = ftprintf_obj/|' Makefile
-	#? Edit archive name
-	sed -i "s/^NAME *= *libftprintf.a$/NAME = libft.a/" Makefile
-	#sed -i "s/^LIBFT = libft$/LIBFT = $lib_subfolder/" Makefile
-	if [ -d "$lib_subfolder/include" ]; then
-		mv "$lib_subfolder/include" ./
+	sed -i "s|^SRC_DIR *= *src/$|SRC_DIR = $src/|" Makefile || handle_error "Failed to update SRC_DIR"
+	sed -i 's|^OBJ_DIR *= *build/$|OBJ_DIR = ftprintf_obj/|' Makefile || handle_error "Failed to update OBJ_DIR"
+
+	local fold=
+	if [ -d "libft/include" ]; then
+		mv libft/include ./ || handle_error "Failed to move libft/include"
+		fold="$src"
+		sed -i '/^INCL_DIR *= *$(LIBFT)/ s|$(LIBFT)|include|' Makefile || handle_error "Failed to update INCL_DIR"
 	else
-		mkdir include
-		mv "$lib_subfolder/libft.h" ./include
+		check_incldir "$src"
+		fold="libft"
 	fi
-	mv ftprintf_src/ft_printf.h ./include
-	sed -i '/^INCL_DIR = $(LIBFT)/ s|$(LIBFT)$|include|' Makefile
-	sed -i '/^INCL_DIR =  include/ s|include|../include|' "$lib_subfolder/Makefile"
+	for file in $fold/*.h; do
+		if [[ -f "$file" ]]; then
+			mv "${fold}/$file" "include/$file" || handle_error "Failed to move header file of $fold"
+		fi
+	done
+	sed -i '/^INCL_DIR =/ s/$/ ../include/' "libft/Makefile" || handle_error "Failed to update INCL_DIR in libft/Makefile"
 
 	echo -e "$ESC[0;${GREEN}mFt_printf added successfully !${RESET}"
+	echo -e "$ESC[$BD;${MAGENTA}mThe name of libft folder is now plibft, don't forget to change it in your project.${RESET}"
 }
 
-function add_gnl() {
+# cloner dans get_next_line
+# supprimer tout les fichiers, dans le dossier get_next_line 
+#	sauf tout ceux dont le nom commence par get_next_line, (ex: get_next_line.c, get_next_line_utils.c, get_next_line.h)
+#	meme les cachés genre `.git` et `.gitignore` 
+# deplacer les fichiers .h (du dossier get_next_line) dans le dossier include
+# ajouter tout les fichiers restant dans le dossier get_next_line dans le Makefile, a la variable 'C_FILES'
+add_gnl()
+{
+	handle_git_clone "$GNL_GIT" "get_next_line" "get_next_line"
 
-	echo -e "$ESC[0;${CYAN}mCloning get_next_line...$ESC[$IT;${BLACK}m"
-	git clone ${GNL_GIT} || handle_error "Failed to clone get next line repository."
-	cd get_next_line || handle_error "Failed to navigate to 'get_next_line' directory."
-	echo -e "$ESC[0;${YELLOW}mCleaning repository...${RESET}"
-	find . -type f ! -name "get_next_line.c" ! -name "get_next_line_utils.c" ! -name "get_next_line.h" -delete
-	cd .. || handle_error "Failed to navigate back to parent directory."
-	handle_include_and_header "get_next_line/get_next_line.h" "get_next_line.h"
-
-	sed -i '/typedef struct s_mem/,/}.*;/d' include/libft.h || handle_error "Failed to delete t_mem in 'libft.h'."
-	sed -i "/^C_FILES =/a \ $(printf '\t\t\t')get_next_line/get_next_line.c \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
-	sed -i "/^C_FILES =/a \ $(printf '\t\t\t')get_next_line/get_next_line_utils.c \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
-	echo -e "$ESC[0;${GREEN}mGet_next_line added successfully !${RESET}"
+	find get_next_line -type f ! -name "get_next_line*" -delete || handle_error "Failed to clean repo"
+	for header in get_next_line/*.h; do
+		if [[ -f "$header" ]]; then
+			mv "$header" ./ || handle_error "Failed to move .h file"
+		fi
+	done
+	check_incldir
+	for file in get_next_line/*c; do
+		if [[ -f "$file" ]]; then
+			sed -i "/^C_FILES =/a \ $(printf '\t\t\t')get_next_line/$file \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
+		fi
+	done
 }
 
 navigate_to_libft() {
@@ -272,6 +310,9 @@ display_and_confirm() {
 
 #* Main script logic
 
+command -v git >/dev/null 2>&1 || handle_error "git is not installed."
+command -v sed >/dev/null 2>&1 || handle_error "sed is not installed."
+
 options=("Automatically compile bonuses" "Add ft_printf" "Add get_next_line" "Quit")
 
 navigate_to_libft
@@ -291,7 +332,6 @@ if display_and_confirm "${options[@]}"; then
     if $has_add_ft_printf; then
         add_ft_printf
     fi
-
 else
     echo -e "$ESC[0;${CYAN}mNo actions were performed.${RESET}"
 	exit 0
@@ -300,6 +340,9 @@ fi
 echo ""
 echo -e "$ESC[$BD;${GREEN}mScript completed !${RESET}"
 echo -e "$ESC[0;${MAGENTA}mPlease run '$ESC[${BD}mnorminette$ESC[22m' to verify compliance.${RESET}"
-echo -e "$ESC[0;${RED}mThis script will now delete itself.${RESET}"
+
 cd .. || handle_error "Failed to navigate back to parent directory."
-rm -- "$0"
+echo -en "$ESC[0;${RED}mDelete the script itself? (Y/n):${RESET}"
+read -r -p ' > ' confirm
+confirm=${confirm:-y}
+[[ $confirm =~ ^[Yy]$ ]] && rm -- "$0"

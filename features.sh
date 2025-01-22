@@ -274,6 +274,8 @@ add_gnl()
 			sed -i "/^C_FILES =/a \ $(printf '\t\t\t')$file \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
 		fi
 	done
+
+	sed -i '/^# include "libft_internal.h"/a \# include "get_next_line.h"' || handle_error "Failed to include gnl header"
 	echo -e "$ESC[0;${GREEN}mGnl added successfully !${RESET}"
 }
 

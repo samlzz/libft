@@ -224,9 +224,9 @@ add_ftprintfs()
 		check_incldir "$src"
 		fold="libft"
 	fi
-	for file in $fold/*.h; do
-		if [[ -f "$file" ]]; then
-			mv "${fold}/$file" "include/$file" || handle_error "Failed to move header file of $fold"
+	for header in $fold/*.h; do
+		if [[ -f "$header" ]]; then
+			mv "$header" "include/" || handle_error "Failed to move header file of $fold"
 		fi
 	done
 	sed -i '/^INCL_DIR =/ s/$/ ../include/' "libft/Makefile" || handle_error "Failed to update INCL_DIR in libft/Makefile"

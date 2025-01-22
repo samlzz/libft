@@ -210,7 +210,7 @@ add_ftprintfs()
 	local src="ftprintf_src"
 
 	create_plibft plibft
-	handle_git_clone "$FT_PRINTF_GIT" 1"$tmp_dir" "ft_printf"
+	handle_git_clone "$FT_PRINTF_GIT" "$tmp_dir" "ft_printf"
 	mv "$tmp_dir/src" "./$src" || handle_error "Failed to move printf srcs"
 	mv "$tmp_dir/Makefile" ./ || handle_error "Failed to move printf Makefile"
 	rm -rf "$tmp_dir" || handle_error "Failed to delete temp directory"

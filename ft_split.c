@@ -18,6 +18,8 @@ void	ft_splitfree(char **splited, size_t end)
 {
 	size_t	i;
 
+	if (!end)
+		while(splited[end++]);
 	i = 0;
 	while (i < end)
 		free(splited[i++]);

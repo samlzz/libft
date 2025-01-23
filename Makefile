@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/05 19:03:59 by sliziard          #+#    #+#              #
-#    Updated: 2025/01/20 15:22:29 by sliziard         ###   ########.fr        #
+#    Updated: 2025/01/23 13:49:42 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,7 @@ C_FILES =	ft_char.c			\
 			ft_mem.c 			\
 			ft_output.c			\
 			ft_split.c			\
+			ft_safe_str.c		\
 			ft_str_alloc.c		\
 			ft_str_iter.c		\
 			ft_str.c			\

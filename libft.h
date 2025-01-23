@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:54:22 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/20 17:52:22 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/23 13:52:26 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,7 @@ int				ft_tolower(int c) __attribute__ ((const));
 char			*ft_strchr(const char *s, int c) __attribute__ ((nonnull(1)));
 char			*ft_strrchr(const char *s, int c) __attribute__ ((nonnull(1)));
 
-//* ft_str
-size_t			ft_strlen(const char *str) __attribute__ ((nonnull(1), pure));
+//* ft_safe_str
 size_t			ft_strlcat(char *dst, const char *src, size_t size)
 				__attribute__ ((nonnull(1, 2)));
 size_t			ft_strlcpy(char *dst, const char *src, size_t size)
@@ -50,6 +49,11 @@ size_t			ft_strlcpy(char *dst, const char *src, size_t size)
 int				ft_strncmp(const char *s1, const char *s2, size_t n)
 				__attribute__ ((nonnull(1, 2)));
 char			*ft_strnstr(const char *big, const char *little, size_t len)
+				__attribute__ ((nonnull(1, 2)));
+
+//* ft_str
+size_t			ft_strlen(const char *str) __attribute__ ((nonnull(1), pure));
+int				ft_strcmp(const char *s1, const char *s2)
 				__attribute__ ((nonnull(1, 2)));
 
 //* ft_str_alloc

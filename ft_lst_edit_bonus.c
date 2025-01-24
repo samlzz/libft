@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 12:11:52 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/24 17:22:41 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/24 17:53:54 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	ft_lstrm_byctn(t_list **lst, void *content, t_lst_f del)
 	t_list	*prev;
 
 	if (!*lst || !content || !del)
-		return ;
+		return (2);
 	prev = NULL;
 	curr = *lst;
 	while (curr && curr->content != content)

@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 12:11:52 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/24 17:09:55 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/24 17:17:29 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,31 +32,27 @@ void	ft_lstadd_back(t_list **lst, t_list *new)
 	last->next = new;
 }
 
-void	ft_lstremove(t_list **lst, t_list *to_rm, t_lst_f del)
+void	ft_lstrm_byctn(t_list **lst, void *content, t_lst_f del)
 {
 	t_list	*curr;
 	t_list	*prev;
-	t_list	*next;
 
-	if (!*lst || !to_rm || !del)
+	if (!*lst || !content || !del)
 		return ;
 	prev = NULL;
 	curr = *lst;
-	next = NULL;
-	while (curr && curr != to_rm)
+	while (curr && curr->content != content)
 	{
 		prev = curr;
 		curr = curr->next;
 	}
-	if (curr)
-		next = curr->next;
-	ft_lstdelone(to_rm, del);
-	if (!next)
+	if (!curr)
 		return ;
 	if (prev)
-		prev->next = next;
+		prev->next = curr->next;
 	else
-		*lst = next;
+		*lst = curr->next;
+	ft_lstdelone(curr, del);
 }
 
 void	ft_lstdelone(t_list *lst, t_lst_f del)

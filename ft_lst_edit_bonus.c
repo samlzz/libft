@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 12:11:52 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/24 17:17:29 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/24 17:22:41 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	ft_lstadd_back(t_list **lst, t_list *new)
 	last->next = new;
 }
 
-void	ft_lstrm_byctn(t_list **lst, void *content, t_lst_f del)
+int	ft_lstrm_byctn(t_list **lst, void *content, t_lst_f del)
 {
 	t_list	*curr;
 	t_list	*prev;
@@ -47,12 +47,13 @@ void	ft_lstrm_byctn(t_list **lst, void *content, t_lst_f del)
 		curr = curr->next;
 	}
 	if (!curr)
-		return ;
+		return (1);
 	if (prev)
 		prev->next = curr->next;
 	else
 		*lst = curr->next;
 	ft_lstdelone(curr, del);
+	return (0);
 }
 
 void	ft_lstdelone(t_list *lst, t_lst_f del)

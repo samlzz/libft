@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:54:22 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/24 17:17:48 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/01/24 17:22:16 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ void			ft_lstadd_front(t_list **lst, t_list *new)
 				__attribute__ ((nonnull(1)));
 void			ft_lstadd_back(t_list **lst, t_list *new)
 				__attribute__ ((nonnull(1)));
-void			ft_lstrm_byctn(t_list **lst, void *content, t_lst_f del)
+int				ft_lstrm_byctn(t_list **lst, void *content, t_lst_f del)
 				__attribute__ ((nonnull(1)));
 void			ft_lstdelone(t_list *lst, t_lst_f del);
 void			ft_lstclear(t_list **lst, t_lst_f del)

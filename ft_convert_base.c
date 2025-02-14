@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 14:44:45 by sliziard          #+#    #+#             */
-/*   Updated: 2025/02/14 14:38:13 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/02/14 15:07:14 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static bool	_is_in_base(char c, char *base, int *index)
 int	ft_atoi_base(char *str, char *base)
 {
 	long	r;
-	int		b_len;
+	size_t	b_len;
 	int		sign;
 	int		b_index;
 	int		i;

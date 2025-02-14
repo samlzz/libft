@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:26:15 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/20 16:22:18 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/02/14 17:14:14 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,17 @@ void	ft_splitfree(char **splited, size_t end)
 {
 	size_t	i;
 
-	if (!end)
-		while(splited[end++]);
 	i = 0;
-	while (i < end)
-		free(splited[i++]);
+	if (end)
+	{
+		while (i < end)
+			free(splited[i++]);
+	}
+	else
+	{
+		while (splited[i])
+			free(splited[i++]);
+	}
 	free(splited);
 }
 

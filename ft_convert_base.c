@@ -6,13 +6,59 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 14:44:45 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/20 15:15:38 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/02/14 14:38:13 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <limits.h>
 #include <stdlib.h>
+
+static bool	_is_in_base(char c, char *base, int *index)
+{
+	int	i;
+
+	i = 0;
+	while (base[i])
+	{
+		if (c == base[i])
+		{
+			*index = i;
+			return (true);
+		}
+		i++;
+	}
+	return (false);
+}
+
+int	ft_atoi_base(char *str, char *base)
+{
+	long	r;
+	int		b_len;
+	int		sign;
+	int		b_index;
+	int		i;
+
+	if (!ft_valid_base(base, &b_len))
+		return (0);
+	i = 0;
+	sign = 1;
+	r = 0;
+	while (str[i] && ((str[i] >= 9 && str[i] <= 13) || str[i] == 32))
+		i++;
+	while (str[i] && (str[i] == '+' || str[i] == '-'))
+	{
+		if (str[i] == '-')
+			sign *= -1;
+		i++;
+	}
+	while (_is_in_base(str[i], base, &b_index))
+	{
+		r = r * b_len + b_index;
+		i++;
+	}
+	return (r * sign);
+}
 
 char	*ft_itoa_base(int n, char *base)
 {

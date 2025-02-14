@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:54:22 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/24 17:22:16 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/02/14 14:39:09 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,8 @@ char			*ft_itoa(int n);
 char			*ft_ltoa(long n);
 
 //* ft_convert_base
+int				ft_atoi_base(char *str, char *base)
+				__attribute__ ((nonnull(1, 2)));
 char			*ft_itoa_base(int n, char *base)
 				__attribute__ ((nonnull(2)));
 char			*ft_ltoa_base(long n, char *base)

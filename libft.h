@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:54:22 by sliziard          #+#    #+#             */
-/*   Updated: 2025/02/14 14:39:09 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/06 22:20:56 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # endif
 
 # include "libft_internal.h"
+# include "libft_bonus.h"
 
 //* ft_is
 int				ft_isalpha(int c) __attribute__ ((const));
@@ -43,7 +44,7 @@ size_t			ft_strlcpy(char *dst, const char *src, size_t size)
  *	- 0, if the s1 and s2 are equal
 
  *	- a `negative` value if s1 is less than s2
- 
+
  *	- a `positive` value if s1 is greater than s2.
  */
 int				ft_strncmp(const char *s1, const char *s2, size_t n)
@@ -121,44 +122,5 @@ void			ft_putchar_fd(char c, int fd);
 void			ft_putstr_fd(char *s, int fd);
 void			ft_putendl_fd(char *s, int fd);
 void			ft_putnbr_fd(int n, int fd);
-
-//* BONUS
-
-/**
- * @struct s_list
- * @brief Represents a node in a linked list.
- */
-typedef struct s_list
-{
-	void			*content;
-	struct s_list	*next;
-}	t_list;
-/**
- * @typedef t_lst_f
- * @brief Function pointer type for list element operations.
- */
-typedef void	(*t_lst_f) (void *);
-
-//* functions
-t_list			*ft_lstnew(void *content);
-int				ft_lstsize(t_list *lst) __attribute__ ((pure));
-t_list			*ft_lstlast(t_list *lst)__attribute__ ((warn_unused_result));
-t_list			*ft_lstoflast(t_list *lst, size_t offset)
-				__attribute__((deprecated("This func needs to be re-written")));
-void			ft_lstadd_front(t_list **lst, t_list *new)
-				__attribute__ ((nonnull(1)));
-void			ft_lstadd_back(t_list **lst, t_list *new)
-				__attribute__ ((nonnull(1)));
-int				ft_lstrm_byctn(t_list **lst, void *content, t_lst_f del)
-				__attribute__ ((nonnull(1)));
-void			ft_lstdelone(t_list *lst, t_lst_f del);
-void			ft_lstclear(t_list **lst, t_lst_f del)
-				__attribute__ ((nonnull(1)));
-void			ft_lstiter(t_list *lst, t_lst_f f)
-				__attribute__ ((nonnull(2)));
-void			ft_lstiteri(t_list *lst, void (*f)(void *, size_t))
-				__attribute__ ((nonnull(2)));
-t_list			*ft_lstmap(t_list *lst, void *(*f)(void *), t_lst_f del)
-				__attribute__ ((warn_unused_result, nonnull(2)));
 
 #endif

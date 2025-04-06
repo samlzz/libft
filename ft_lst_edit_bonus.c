@@ -6,30 +6,30 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 12:11:52 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/24 17:53:54 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/06 21:58:29 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <stdlib.h>
 
-void	ft_lstadd_front(t_list **lst, t_list *new)
+void	ft_lstadd_front(t_list **lst, t_list *new_node)
 {
-	if (new)
+	if (new_node)
 	{
-		new->next = *lst;
-		*lst = new;
+		new_node->next = *lst;
+		*lst = new_node;
 	}
 }
 
-void	ft_lstadd_back(t_list **lst, t_list *new)
+void	ft_lstadd_back(t_list **lst, t_list *new_node)
 {
 	t_list	*last;
 
 	if (!*lst)
-		return (ft_lstadd_front(lst, new));
+		return (ft_lstadd_front(lst, new_node));
 	last = ft_lstlast(*lst);
-	last->next = new;
+	last->next = new_node;
 }
 
 int	ft_lstrm_byctn(t_list **lst, void *content, t_lst_f del)

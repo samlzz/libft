@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/05 19:03:59 by sliziard          #+#    #+#              #
-#    Updated: 2025/04/06 21:57:06 by sliziard         ###   ########.fr        #
+#    Updated: 2025/04/06 22:22:56 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,8 +25,6 @@ MD = mkdir -p
 AR = ar rcs
 
 C_FILES =	ft_char.c			\
- 			get_next_line/get_next_line_utils.c \
- 			get_next_line/get_next_line.c \
 			ft_convert_utils.c	\
 			ft_convert.c		\
 			ft_convert_base.c	\

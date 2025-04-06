@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/05 19:03:59 by sliziard          #+#    #+#              #
-#    Updated: 2025/01/23 13:49:42 by sliziard         ###   ########.fr        #
+#    Updated: 2025/04/06 21:57:06 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ NAME =		libft.a
 #TODO: Folders name must end with '\'
 SRC_DIR =
 OBJ_DIR =
-INCL_DIR = 
+INCL_DIR =  include
 
 CC = gcc
 CFLAGS := -Wall -Wextra -Werror
@@ -25,6 +25,8 @@ MD = mkdir -p
 AR = ar rcs
 
 C_FILES =	ft_char.c			\
+ 			get_next_line/get_next_line_utils.c \
+ 			get_next_line/get_next_line.c \
 			ft_convert_utils.c	\
 			ft_convert.c		\
 			ft_convert_base.c	\
@@ -40,7 +42,8 @@ C_FILES =	ft_char.c			\
 			
 BONUS_SRC =	ft_lst_edit_bonus.c	\
 			ft_lst_get_bonus.c	\
-			ft_lst_iter_bonus.c
+			ft_lst_iter_bonus.c \
+			ft_dynbuf_bonus.c
 
 #* Colors
 
@@ -78,7 +81,7 @@ endif
 
 #* Rules
 
-all:	$(NAME)
+all:	$(NAME) bonus
 
 $(NAME): $(O_DIRS) $(OBJS)
 	@printf "$(GRAY)"

@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 22:13:41 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/06 22:14:42 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/07 10:44:17 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ static bool	_dynbuf_resize(t_dynbuf *buf, size_t min_cap)
 	size_t	new_cap;
 	char	*new_data;
 
-	new_cap = buf->capacity * 2;
+	new_cap = buf->capacity * DYNBUF_REALOC_FACTOR;
 	while (new_cap < min_cap)
-		new_cap *= 2;
+		new_cap *= DYNBUF_REALOC_FACTOR;
 	new_data = ft_realloc(buf->data, buf->len, new_cap);
 	if (!new_data)
 		return (false);

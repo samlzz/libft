@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 22:13:41 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/07 10:44:17 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/07 11:49:27 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ static bool	_dynbuf_resize(t_dynbuf *buf, size_t min_cap)
 	if (!new_data)
 		return (false);
 	new_data[buf->len] = '\0';
-	free(buf->data);
 	buf->data = new_data;
 	buf->capacity = new_cap;
 	return (true);

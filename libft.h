@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:54:22 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/06 22:20:56 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/07 11:29:39 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ char			*ft_substr(char const *s, unsigned int start, size_t len)
 				__attribute__ ((warn_unused_result, nonnull(1)));
 char			*ft_strjoin(char const *s1, char const *s2)
 				__attribute__ ((warn_unused_result, nonnull(1, 2)));
+char			*ft_strappend(char const *base, char const *suf)
+				__attribute__ ((warn_unused_result));
 char			*ft_strtrim(char const *s1, char const *set)
 				__attribute__ ((warn_unused_result, nonnull(1, 2)));
 // split

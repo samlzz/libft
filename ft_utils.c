@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:15:55 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/21 14:42:43 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:21:43 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	*ft_realloc(void *ptr, size_t og_size, size_t new_size)
 	return (new_ptr);
 }
 
-inline unsigned int	ft_abs(int value)
+inline uint32_t	ft_abs(int32_t value)
 {
 	if (value < 0)
 		return (-value);

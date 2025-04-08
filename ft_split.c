@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:26:15 by sliziard          #+#    #+#             */
-/*   Updated: 2025/02/14 17:14:14 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:09:13 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static bool	_get_substr(char const *src, char c, size_t *start, char **substr)
 	end = i;
 	if (end > *start)
 	{
-		tmp = ft_substr(src, ((unsigned int)(*start)), end - *start);
+		tmp = ft_substr(src, ((uint32_t)(*start)), end - *start);
 		if (!tmp)
 			return (false);
 		*substr = tmp;

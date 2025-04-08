@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:16:05 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/23 13:51:52 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:08:47 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ size_t	ft_strlen(const char *str)
 	return (i);
 }
 
-int	ft_strcmp(const char *s1, const char *s2)
+int32_t	ft_strcmp(const char *s1, const char *s2)
 {
 	size_t	i;
 

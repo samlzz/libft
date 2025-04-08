@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/23 13:48:41 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/23 13:49:24 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:08:15 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	return (i);
 }
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+int32_t	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
 	size_t	i;
 

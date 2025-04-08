@@ -6,17 +6,17 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 16:29:39 by sliziard          #+#    #+#             */
-/*   Updated: 2024/11/05 11:59:16 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:09:23 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include <stdlib.h>
 
-char	*ft_strmapi(char const *s, char (*f) (unsigned int, char))
+char	*ft_strmapi(char const *s, char (*f) (uint32_t, char))
 {
 	char			*dest;
-	unsigned int	i;
+	uint32_t	i;
 
 	dest = malloc(sizeof (char) * (ft_strlen(s) + 1));
 	if (!dest)
@@ -31,9 +31,9 @@ char	*ft_strmapi(char const *s, char (*f) (unsigned int, char))
 	return (dest);
 }
 
-void	ft_striteri(char *s, void (*f) (unsigned int, char *))
+void	ft_striteri(char *s, void (*f) (uint32_t, char *))
 {
-	unsigned int	i;
+	uint32_t	i;
 
 	i = 0;
 	while (*s)

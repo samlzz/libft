@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:25:53 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/07 11:28:29 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:09:19 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char	*ft_strdup(const char *s)
 	return (dest);
 }
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
+char	*ft_substr(char const *s, uint32_t start, size_t len)
 {
 	char	*dest;
 	size_t	i;
@@ -95,10 +95,10 @@ char	*ft_strtrim(char const *s1, char const *set)
 	size_t	end;
 
 	s = 0;
-	while (s1[s] && ft_strchr(set, (int)s1[s]))
+	while (s1[s] && ft_strchr(set, (int32_t)s1[s]))
 		s++;
 	end = ft_strlen(s1);
-	while (end > s && ft_strchr(set, (int)s1[end - 1]))
+	while (end > s && ft_strchr(set, (int32_t)s1[end - 1]))
 		end--;
-	return (ft_substr(s1, (unsigned int)s, end - s));
+	return (ft_substr(s1, (uint32_t)s, end - s));
 }

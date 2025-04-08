@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:26:27 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/20 15:20:53 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:08:11 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,21 @@
 
 #define PUTNBR_BASE 10
 
-void	ft_putchar_fd(char c, int fd)
+void	ft_putchar_fd(char c, int32_t fd)
 {
 	if (fd < 0)
 		return ;
 	write(fd, &c, 1);
 }
 
-void	ft_putstr_fd(char *s, int fd)
+void	ft_putstr_fd(char *s, int32_t fd)
 {
 	if (fd < 0)
 		return ;
 	write(fd, s, ft_strlen(s));
 }
 
-void	ft_putendl_fd(char *s, int fd)
+void	ft_putendl_fd(char *s, int32_t fd)
 {
 	if (fd < 0)
 		return ;
@@ -37,7 +37,7 @@ void	ft_putendl_fd(char *s, int fd)
 	write(fd, "\n", 1);
 }
 
-static void	_recurs_putnbr_fd(long n, int fd)
+static void	_recurs_putnbr_fd(int64_t n, int32_t fd)
 {
 	if (n < 0)
 	{
@@ -49,9 +49,9 @@ static void	_recurs_putnbr_fd(long n, int fd)
 	ft_putchar_fd((n % PUTNBR_BASE) + '0', fd);
 }
 
-void	ft_putnbr_fd(int n, int fd)
+void	ft_putnbr_fd(int32_t n, int32_t fd)
 {
 	if (fd < 0)
 		return ;
-	_recurs_putnbr_fd((long)n, fd);
+	_recurs_putnbr_fd((int64_t)n, fd);
 }

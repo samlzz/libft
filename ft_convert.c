@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:20:37 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/20 15:03:24 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:07:48 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 #include <stdlib.h>
 #include <limits.h>
 
-int	ft_atoi(const char *nptr)
+int32_t	ft_atoi(const char *nptr)
 {
-	int	r;
-	int	s;
+	int32_t	r;
+	int32_t	s;
 
 	r = 0;
 	s = 1;
@@ -37,10 +37,10 @@ int	ft_atoi(const char *nptr)
 	return (r * s);
 }
 
-int	ft_satoi(char const *nptr, int *error)
+int32_t	ft_satoi(char const *nptr, int32_t *error)
 {
-	long	r;
-	int		s;
+	int64_t	r;
+	int32_t		s;
 
 	r = 0;
 	s = 1;
@@ -63,24 +63,24 @@ int	ft_satoi(char const *nptr, int *error)
 	}
 	if (*nptr || *(nptr - 1) == '-' || *(nptr - 1) == '+')
 		*error = 1;
-	return ((int)r * s);
+	return ((int32_t)r * s);
 }
 
-char	*ft_itoa(int n)
+char	*ft_itoa(int32_t n)
 {
 	t_mem	*dest;
 	char	*n_in_base10;
 
-	dest = _init_dest_to_convert((long)n, 10);
+	dest = _init_dest_to_convert((int64_t)n, 10);
 	if (!dest)
 		return (NULL);
-	_nb_to_asciistr((long)n, dest, "0123456789", 10);
+	_nb_to_asciistr((int64_t)n, dest, "0123456789", 10);
 	n_in_base10 = dest->content;
 	free(dest);
 	return (n_in_base10);
 }
 
-char	*ft_ltoa(long n)
+char	*ft_ltoa(int64_t n)
 {
 	t_mem	*dest;
 	char	*n_in_base10;

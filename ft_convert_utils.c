@@ -6,14 +6,14 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 14:33:50 by sliziard          #+#    #+#             */
-/*   Updated: 2025/01/20 15:15:43 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 19:47:23 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft_internal.h"
 #include <stdlib.h>
 
-void	_nb_to_asciistr(long nb, t_mem *dest, char *base, size_t b_len)
+void	_nb_to_asciistr(int64_t nb, t_mem *dest, char *base, size_t b_len)
 {
 	dest->content[dest->size] = '\0';
 	if (nb == 0)
@@ -33,7 +33,7 @@ void	_nb_to_asciistr(long nb, t_mem *dest, char *base, size_t b_len)
 	}
 }
 
-t_mem	*_init_dest_to_convert(long n, size_t base_l)
+t_mem	*_init_dest_to_convert(int64_t n, size_t base_l)
 {
 	t_mem	*dest;
 

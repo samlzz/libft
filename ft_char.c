@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:19:51 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/08 22:04:18 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:29:40 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*ft_strchr(const char *s, int32_t c)
 		return ((char *)s + ft_strlen(s));
 	while (*s)
 	{
-		if ((uint8_t)*s == uc)
+		if (*(uint8_t *)s == uc)
 			return ((char *)s);
 		s++;
 	}

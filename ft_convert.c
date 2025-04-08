@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:20:37 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/08 22:07:48 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:28:23 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int32_t	ft_atoi(const char *nptr)
 int32_t	ft_satoi(char const *nptr, int32_t *error)
 {
 	int64_t	r;
-	int32_t		s;
+	int32_t	s;
 
 	r = 0;
 	s = 1;

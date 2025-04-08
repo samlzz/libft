@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 16:29:39 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/08 22:09:23 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:29:09 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 char	*ft_strmapi(char const *s, char (*f) (uint32_t, char))
 {
-	char			*dest;
 	uint32_t	i;
+	char		*dest;
 
 	dest = malloc(sizeof (char) * (ft_strlen(s) + 1));
 	if (!dest)

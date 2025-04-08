@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:54:22 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/08 22:21:55 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:28:09 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void		ft_striteri(char *s, void (*f) (uint32_t, char *))
 			__attribute__ ((nonnull(1, 2)));
 
 //* ft_mem
-void		*ft_memset(void *s, int32_t c, size_t n) 
+void		*ft_memset(void *s, int32_t c, size_t n)
 			__attribute__ ((nonnull(1)));
 // Don't manage overlap
 void		*ft_memcpy(void *dest, const void *src, size_t n)

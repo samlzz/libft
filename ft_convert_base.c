@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 14:44:45 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/08 22:04:57 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 22:24:57 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ int32_t	ft_atoi_base(char *str, char *base)
 {
 	int64_t	r;
 	size_t	b_len;
-	int32_t		sign;
-	int32_t		b_index;
-	int32_t		i;
+	int32_t	sign;
+	int32_t	b_index;
+	int32_t	i;
 
 	if (!ft_valid_base(base, &b_len))
 		return (0);

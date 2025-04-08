@@ -3,8 +3,9 @@
 # Git repository adress
 GNL_GIT="git@github.com:samlzz/get_next_line.git"
 FT_PRINTF_GIT="git@github.com:samlzz/ft_printf.git"
+CONTAINER_GIT="git@github.com:samlzz/libft_containers.git"
 
-#* ANSI color codes 
+#* ANSI color codes
 # format: '$ESC[<style>;<color>m
 
 ESC='\033'
@@ -22,17 +23,14 @@ YELLOW=33
 BLUE=34
 MAGENTA=35
 CYAN=36
-WHITE=37
 
-RESET="$ESC[0m"
+RESET="${ESC}[0m"
 
-BG()
-{
+BG() {
 	local input=$1
 	echo $((input + 10))
 }
-BRIGHT()
-{
+BRIGHT() {
 	local input=$1
 	echo $((input + 60))
 }
@@ -66,7 +64,7 @@ MENU() {
 		echo -e "$ESC[$IT;${BLACK}mNavigate with arrow, press space to select and enter for submit${RESET}"
 		echo ""
 
-		for (( i=0; i<len; i++ )); do
+		for ((i = 0; i < len; i++)); do
 			if [[ " ${SELECTED_OPTIONS[*]} " =~ " $i " ]]; then
 				mark="$ESC[0;${BLUE}m~"
 			else
@@ -85,52 +83,51 @@ MENU() {
 		fi
 	}
 
-    print_menu
+	print_menu
 	stty -icanon -echo
 	while IFS="" read -r -s -n 1 c; do
 		case $c in
-			"A")
-				SELECTED=$(( (SELECTED - 1 + len) % len ))
-				;;
-			"B")
-				SELECTED=$(( (SELECTED + 1) % len ))
-				;;
-			" ")
-				#? if selected was already selected remove it, else add it
-				if [[ " ${SELECTED_OPTIONS[*]} " =~ " $SELECTED " ]]; then
-					SELECTED_OPTIONS=("${SELECTED_OPTIONS[@]/$SELECTED}")
-				else 
-						SELECTED_OPTIONS+=($SELECTED)
-				fi
-				;;
-			"")
-				if (( SELECTED == len - 1 )); then
-					if is_contains_others "$SELECTED" SELECTED_OPTIONS[@]; then
-						quit_selected=1
-					else
-						break
-					fi
+		"A")
+			SELECTED=$(((SELECTED - 1 + len) % len))
+			;;
+		"B")
+			SELECTED=$(((SELECTED + 1) % len))
+			;;
+		" ")
+			#? if selected was already selected remove it, else add it
+			if [[ " ${SELECTED_OPTIONS[*]} " =~ " $SELECTED " ]]; then
+				SELECTED_OPTIONS=("${SELECTED_OPTIONS[@]/$SELECTED/}")
+			else
+				SELECTED_OPTIONS+=($SELECTED)
+			fi
+			;;
+		"")
+			if ((SELECTED == len - 1)); then
+				if is_contains_others "$SELECTED" SELECTED_OPTIONS[@]; then
+					quit_selected=1
 				else
 					break
 				fi
-				;;
+			else
+				break
+			fi
+			;;
 		esac
 		print_menu
 	done
 	stty sane
 
-    echo "${SELECTED_OPTIONS[@]}"
+	echo "${SELECTED_OPTIONS[@]}"
 }
 
 handle_error() {
-    local message="$1"
+	local message="$1"
 
-    echo -e "$RESET$ESC[$BD;91mError:$ESC[22m ${message}${RESET}" >&2
-    exit 1
+	echo -e "$RESET$ESC[$BD;91mError:$ESC[22m ${message}${RESET}" >&2
+	exit 1
 }
 
-handle_git_clone()
-{
+handle_git_clone() {
 	local repo="$1"
 	local path="$2"
 	local name="$3"
@@ -141,11 +138,11 @@ handle_git_clone()
 }
 
 delete_if_empty() {
-    local dir="$1"
+	local dir="$1"
 
-    if [ -d "$dir" ] && [ -z "$(ls -A "$dir")" ]; then
-        rmdir "$dir"
-    fi
+	if [ -d "$dir" ] && [ -z "$(ls -A "$dir")" ]; then
+		rmdir "$dir"
+	fi
 }
 
 # function ()
@@ -153,8 +150,7 @@ delete_if_empty() {
 # si il n'existe ne pas
 #		le creer et deplacer tout les fichiers .h dedans
 # sinon ne rien faire
-check_incldir()
-{
+check_incldir() {
 	local dir="$1"
 
 	if [[ -z "$dir" ]]; then
@@ -170,15 +166,8 @@ check_incldir()
 	done
 }
 
-
-compile_bonuses() {
-	sed -i "/^all:.*\$(NAME)/ s/$/ bonus/" Makefile || handle_error "Failed to update Makefile for auto-compil bonuses."
-	echo -e "$ESC[0;${GREEN}mBonuses will be compiled automatically !${RESET}"
-}
-
 # renommer le dossier actuel (libft) en plibft
-create_plibft()
-{
+create_plibft() {
 	local new_libname="$1"
 
 	echo -e "$ESC[$BD;${MAGENTA}mThe structure of libft folder is about to change.${RESET}"
@@ -204,8 +193,7 @@ create_plibft()
 # deplacer tout les .h dans le dossier include
 # modifier 'INCL_DIR = $(LIBFT)' dans Makefile par 'INCL_DIR = include'
 # afficher en magenta que le nom de la lib (.a et dossier) a changé en plibft
-add_ftprintfs()
-{	
+add_ftprintfs() {
 	local tmp_dir="/tmp/.libft_features/ft_printf"
 	local src="ftprintf_src"
 
@@ -232,12 +220,11 @@ add_ftprintfs()
 
 	#? Change lib name in Makefile of curr project
 	local makefile="../Makefile"
-	sed_and_warn()
-	{
+	sed_and_warn() {
 		local var="$1"
 		local value="$2"
 		local expected="${value}p"
-		
+
 		if ! sed -i "/^$var *=/ s|$value|$expected|" "$makefile"; then
 			echo -e "$ESC[$BD;${YELLOW}mWarning$ESC[0;${YELLOW}m failed to update $ESC[$BD;${YELLOW}m${var}$ESC[0;${YELLOW}m to $ESC[$UD;${YELLOW}m${expected}$ESC[0;${YELLOW}m in the Makefile."
 			echo -e "$ESC[0;${MAGENTA}mPlease update it manually.$RESET"
@@ -254,13 +241,12 @@ add_ftprintfs()
 }
 
 # cloner dans get_next_line
-# supprimer tout les fichiers, dans le dossier get_next_line 
+# supprimer tout les fichiers, dans le dossier get_next_line
 #	sauf tout ceux dont le nom commence par get_next_line, (ex: get_next_line.c, get_next_line_utils.c, get_next_line.h)
-#	meme les cachés genre `.git` et `.gitignore` 
+#	meme les cachés genre `.git` et `.gitignore`
 # deplacer les fichiers .h (du dossier get_next_line) dans le dossier include
 # ajouter tout les fichiers restant dans le dossier get_next_line dans le Makefile, a la variable 'C_FILES'
-add_gnl()
-{
+add_gnl() {
 	handle_git_clone "$GNL_GIT" "get_next_line" "get_next_line"
 
 	find get_next_line -type f ! -name "get_next_line*" -delete || handle_error "Failed to clean repo"
@@ -268,7 +254,7 @@ add_gnl()
 	check_incldir
 	check_incldir get_next_line
 
-	sed -i '/^INCL_DIR =/ s/$/ include/' Makefile || handle_error "Failed to update INCL_DIR in Makefile"
+	sed -i '/^INCL_DIR =/ s/$/ include/' Makefile 
 	for file in get_next_line/*c; do
 		if [[ -f "$file" ]]; then
 			sed -i "/^C_FILES =/a \ $(printf '\t\t\t')$file \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
@@ -277,6 +263,39 @@ add_gnl()
 
 	sed -i '/^# include "libft_internal.h"/a \# include "get_next_line.h"' include/libft.h || handle_error "Failed to include gnl header"
 	echo -e "$ESC[0;${GREEN}mGnl added successfully !${RESET}"
+}
+
+# cloner dans un tmp dir
+# créer 'containers' et y mettre tout les fichiers sources
+# créer un dossier include dans libft et y ajouter les .h
+# ajouter les .h du tmp_dir/include aux include de libft.h et dans le dossier include
+# ajouter le dossier include comme INCL_DIR dans le Makefile libft
+# ajouter les fichiers .c (des containers) au Makefile
+add_containers() {
+	local tmp_dir="/tmp/.libft_features/ft_printf"
+
+	handle_git_clone "$CONTAINERS_GIT" "$tmp_dir" "libft_containers"
+
+	mkdir containers || handle_error "Failed to create containers directory"
+	rm -rf ./$tmp_dir/src/libft_utils
+	mv $tmp_dir/src/* ./containers || handle_error "Failed to move containers srcs"
+
+	check_incldir
+	for hfile in $tmp_dir/include/*h; do
+		if [[ -f "$hfile" ]]; then
+			sed -i "/^# include \"libft_internal.h\"/a \# include \"$(basename $hfile)\"" include/libft.h || handle_error "Failed to include gnl header"
+		fi
+	done
+	check_incldir "$tmp_dir/include"
+
+	sed -i '/^INCL_DIR =/ s/$/ include/' Makefile
+	for file in containers/*c; do
+		if [[ -f "$file" ]]; then
+			sed -i "/^C_FILES =/a \ $(printf '\t\t\t')$file \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
+		fi
+	done
+	rm -rf $tmp_dir
+	echo -e "$ESC[0;${GREEN}mContainers added successfully !${RESET}"
 }
 
 navigate_to_libft() {
@@ -297,10 +316,9 @@ navigate_to_libft() {
 display_and_confirm() {
 	local options=("$@")
 
-	print_rectangle()
-	{
-		local	elements=("$@")
-		local	width=0
+	print_rectangle() {
+		local elements=("$@")
+		local width=0
 
 		#? Find the max width for rectangle
 		for selected in "${elements[@]}"; do
@@ -323,45 +341,47 @@ display_and_confirm() {
 	print_rectangle "${SELECTED_OPTIONS[@]}"
 
 	#? Ask confirmation
-    while true; do
-        echo -e "$ESC[${YELLOW}mConfirm your selection ? (Y/n):${RESET}"
-        read -r -p ' > ' confirmation
+	while true; do
+		echo -e "$ESC[${YELLOW}mConfirm your selection ? (Y/n):${RESET}"
+		read -r -p ' > ' confirmation
 		confirmation=${confirmation:-y}
-        case $confirmation in
-            [Yy]*) return 0 ;;
-            [Nn]*) echo -e "$ESC[${RED}mOperation canceled.${RESET}"; return 1 ;;
-            *) echo -e "$ESC[${MAGENTA}mPlease answer 'y' or 'n'.${RESET}" ;;
-        esac
-    done
+		case $confirmation in
+		[Yy]*) return 0 ;;
+		[Nn]*)
+			echo -e "$ESC[${RED}mOperation canceled.${RESET}"
+			return 1
+			;;
+		*) echo -e "$ESC[${MAGENTA}mPlease answer 'y' or 'n'.${RESET}" ;;
+		esac
+	done
 }
-
 
 #* Main script logic
 
 command -v git >/dev/null 2>&1 || handle_error "git is not installed."
 command -v sed >/dev/null 2>&1 || handle_error "sed is not installed."
 
-options=("Automatically compile bonuses" "Add ft_printf" "Add get_next_line" "Quit")
+options=("Add libft_containers" "Add ft_printf" "Add get_next_line" "Quit")
 
 navigate_to_libft
 MENU "${options[@]}"
 clear
 
 if display_and_confirm "${options[@]}"; then
-    has_add_ft_printf=false
+	has_add_ft_printf=false
 
-    for i in "${SELECTED_OPTIONS[@]}"; do
-        case $i in
-            0) compile_bonuses ;;
-            1) has_add_ft_printf=true ;;
-            2) add_gnl ;;
-        esac
-    done
-    if $has_add_ft_printf; then
-        add_ftprintfs
-    fi
+	for i in "${SELECTED_OPTIONS[@]}"; do
+		case $i in
+		0) add_containers ;;
+		1) has_add_ft_printf=true ;;
+		2) add_gnl ;;
+		esac
+	done
+	if $has_add_ft_printf; then
+		add_ftprintfs
+	fi
 else
-    echo -e "$ESC[0;${CYAN}mNo actions were performed.${RESET}"
+	echo -e "$ESC[0;${CYAN}mNo actions were performed.${RESET}"
 	exit 0
 fi
 

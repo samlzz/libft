@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:54:22 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/07 11:29:39 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/08 12:41:09 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # endif
 
 # include "libft_internal.h"
-# include "libft_bonus.h"
 
 //* ft_is
 int				ft_isalpha(int c) __attribute__ ((const));

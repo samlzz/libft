@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/05 19:03:59 by sliziard          #+#    #+#              #
-#    Updated: 2025/04/06 22:22:56 by sliziard         ###   ########.fr        #
+#    Updated: 2025/04/08 12:59:38 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,11 +38,6 @@ C_FILES =	ft_char.c			\
 			ft_str.c			\
 			ft_utils.c
 			
-BONUS_SRC =	ft_lst_edit_bonus.c	\
-			ft_lst_get_bonus.c	\
-			ft_lst_iter_bonus.c \
-			ft_dynbuf_bonus.c
-
 #* Colors
 
 ESC = \033[
@@ -67,7 +62,6 @@ endif
 
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
 OBJS := $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
-BONUS_OBJ =	$(addprefix $(OBJ_DIR), $(BONUS_SRC:.c=.o))
 O_DIRS := $(sort $(dir $(OBJS)))
 
 #? cmd for make final file
@@ -79,7 +73,7 @@ endif
 
 #* Rules
 
-all:	$(NAME) bonus
+all:	$(NAME)
 
 $(NAME): $(O_DIRS) $(OBJS)
 	@printf "$(GRAY)"
@@ -93,12 +87,8 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 $(O_DIRS):
 	@$(MD) $@
 
-bonus: $(NAME) $(BONUS_OBJ)
-	@$(AR) $(NAME) $(BONUS_OBJ)
-
 clean:
 	@$(RM) $(OBJS)
-	@$(RM) $(BONUS_OBJ)
 	@$(RM) -r $(OBJ_DIR)
 	@$(RM) libft_obj.txt
 	$(call COLOR_PRINT,$(BLUE),$(NAME) object files cleaned!)
@@ -109,4 +99,4 @@ fclean:		clean
 re:		fclean all
 	$(call COLOR_PRINT,$(GREEN),Cleaned and rebuilt everything for $(NAME)!)
 
-.PHONY:		all clean fclean re bonus
+.PHONY:		all clean fclean re

@@ -4,3 +4,4 @@
 .vscode/*
 **/ign_*
 test/*
+oldfeatures.sh

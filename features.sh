@@ -1,400 +1,267 @@
 #!/bin/bash
 
-# Git repository adress
+# Global Constants
 GNL_GIT="git@github.com:samlzz/get_next_line.git"
 FT_PRINTF_GIT="git@github.com:samlzz/ft_printf.git"
 CONTAINER_GIT="git@github.com:samlzz/libft_containers.git"
 
-#* ANSI color codes
-# format: '$ESC[<style>;<color>m
+TMP_DIR="/tmp/.libft_features"
 
 ESC='\033'
-#? style
-BD=1
-IT=3
-UD=4
-RV=7
-
-#? colors
-BLACK=30
-RED=31
-GREEN=32
-YELLOW=33
-BLUE=34
-MAGENTA=35
-CYAN=36
-
+BD=1; IT=3; UD=4
+BLACK=30; RED=31; GREEN=32; YELLOW=33; BLUE=34; MAGENTA=35; CYAN=36
 RESET="${ESC}[0m"
 
-BG() {
-	local input=$1
-	echo $((input + 10))
-}
-BRIGHT() {
-	local input=$1
-	echo $((input + 60))
+BG() { echo $(( $1 + 10 )); }
+BRIGHT() { echo $(( $1 + 60 )); }
+
+# Utility: Print error and exit
+handle_error() {
+	local msg="$1"
+	printf "$ESC[$BD;${RED}mError:$ESC[22m %s${RESET}\n" "$msg" >&2
+	exit 1
 }
 
-#* Functions
+# Utility: Git clone
+clone_repo() {
+	local url="$1" dest="$2" name="$3"
+	printf "$ESC[0;${CYAN}mCloning %s...$ESC[$IT;${BLACK}m\n" "$name"
+	git clone "$url" "$dest" || handle_error "Cloning $name failed"
+}
+
+# Utility: Header relocation
+move_headers_to_include() {
+	local src="$1"
+	[[ ! -d include ]] && mkdir include
+	find "$src" -maxdepth 1 -type f -name "*.h" -exec mv {} include/ \;
+}
+
+# Utility: Add .c files to Makefile
+append_cfiles_to_makefile() {
+	local dir="$1"
+	for cfile in "$dir"/*.c; do
+		[[ -f $cfile ]] && sed -i "/^C_FILES =/a \ \ \ \ $cfile \\\\" Makefile
+	done
+}
+
+# Utility: Inject include to libft.h
+inject_headers_to_libft_h() {
+	local dir="$1"
+	for hfile in "$dir"/*.h; do
+		local base
+		base=$(basename "$hfile")
+		grep -qxF "# include \"$base\"" include/libft.h || \
+			sed -i "/^# include \"libft_internal.h\"/a \# include \"$base\"" include/libft.h
+	done
+}
+
+# Create libftp structure
+setup_libftp_structure() {
+	local newlib="libftp"
+	mkdir -p "../$newlib/libft" || handle_error "Failed to create $newlib/libft"
+	for item in *; do
+		[[ "$item" != "$(basename "$0")" ]] && mv "$item" "../$newlib/libft/"
+	done
+	cd "../$newlib" || handle_error "Could not cd to $newlib"
+}
+
+# Add ft_printf
+add_ftprintfs() {
+	local tmp="/tmp/.libft_features/ft_printf"
+	local src="ftprintf_src"
+
+	setup_libftp_structure
+	clone_repo "$FT_PRINTF_GIT" "$tmp" "ft_printf"
+	mv "$tmp/src" "$src"
+	mv "$tmp/Makefile" .
+	rm -rf "$tmp"
+
+	sed -i "s|^SRC_DIR *=.*|SRC_DIR = $src/|" Makefile
+	sed -i "s|^OBJ_DIR *=.*|OBJ_DIR = ftprintf_obj/|" Makefile
+
+	[[ -d libft/include ]] && mv libft/include . || move_headers_to_include libft
+	sed -i "s|^INCL_DIR *=.*|INCL_DIR = ../include|" libft/Makefile
+	move_headers_to_include "$src"
+	sed -i "s|^INCL_DIR *=.*|INCL_DIR = include|" Makefile
+
+	sed -i 's|^LIBFT *=.*|LIBFT = libftp|' ../Makefile 2>/dev/null || true
+	sed -i 's|^LIB_FILES *=.*|LIB_FILES = ftp|' ../Makefile 2>/dev/null || true
+
+	printf "$ESC[0;${GREEN}mFt_printf added successfully!$RESET\n"
+	printf "$ESC[$BD;${MAGENTA}mLib renamed to libftp.$RESET\n"
+}
+
+# Add get_next_line
+add_gnl() {
+	local dir="get_next_line"
+	clone_repo "$GNL_GIT" "$dir" "get_next_line"
+	find "$dir" -type f ! -name "get_next_line*" -delete
+	rm -rf "$dir/.git"
+	inject_headers_to_libft_h "$dir"
+	move_headers_to_include "$dir"
+	append_cfiles_to_makefile "$dir"
+	sed -i '/^INCL_DIR =/ s/$/ include/' Makefile
+	printf "$ESC[0;${GREEN}mGNL added successfully!$RESET\n"
+}
+
+# Add containers
+add_containers() {
+	local tmp="/tmp/.libft_features/containers"
+	local dst="containers"
+
+	clone_repo "$CONTAINER_GIT" "$tmp" "libft_containers"
+	rm -rf "$tmp/src/libft_utils"
+
+	move_headers_to_include .
+	inject_headers_to_libft_h "$tmp/include"
+	move_headers_to_include "$tmp/include"
+
+	mkdir -p "$dst"
+	mv "$tmp/src"/* "$dst"
+	rm -rf "$tmp"
+	append_cfiles_to_makefile "$dst"
+	sed -i '/^INCL_DIR =/ s/$/ include/' Makefile
+	printf "$ESC[0;${GREEN}mContainers added successfully!$RESET\n"
+}
 
 MENU() {
+	local options=("$@") len=${#options[@]}
+	selected=0
 	local indicator="$ESC[$BD;${YELLOW}m<"
-	options=("$@")
-	local len=${#options[@]}
-	local quit_selected=0
-	SELECTED=0
 	SELECTED_OPTIONS=()
 
-	is_contains_others() {
-		local selected="$1"
-		local options=("${!2}")
-		for option in "${options[@]}"; do
-			if [[ "$option" -ne "$selected" ]]; then
-				return 0
-			fi
-		done
-		return 1
-	}
-
-	print_menu() {
-		HILIGHT="$ESC[$UD;$(BRIGHT $CYAN)m"
+	draw() {
+		local hilight="$ESC[$UD;$(BRIGHT $CYAN)m"
 		clear
 
-		echo -e "${HILIGHT}Welcome to the $ESC[${BD}mLibft$ESC[22m Configuration Script${RESET}"
-		echo -e "$ESC[$IT;${BLACK}mNavigate with arrow, press space to select and enter for submit${RESET}"
-		echo ""
+		printf "${hilight}Welcome to the $ESC[${BD}mLibft$ESC[22m Config Script${RESET}\n"
+		printf "$ESC[$IT;${BLACK}mArrow keys to navigate, space to select, enter to confirm/quit$RESET\n\n"
 
 		for ((i = 0; i < len; i++)); do
-			if [[ " ${SELECTED_OPTIONS[*]} " =~ " $i " ]]; then
-				mark="$ESC[0;${BLUE}m~"
+			local mark="-"
+			[[ " ${SELECTED_OPTIONS[*]} " =~ "$i " ]] && mark="$ESC[0;${BLUE}m~"
+			if [[ $selected -eq $i ]]; then
+				printf "$ESC[38;5;15m $mark %s <$RESET\n" "${options[$i]}"
 			else
-				mark="-"
-			fi
-
-			if [[ $SELECTED -eq $i ]]; then
-				echo -e "$ESC[38;5;15m $mark ${options[$i]} $indicator${RESET}"
-			else
-				echo -e "$mark ${options[$i]}$RESET"
+				printf " $mark %s\n$RESET" "${options[$i]}"
 			fi
 		done
-		if [[ quit_selected -eq 1 ]]; then
-			echo -e "$ESC[$IT;${RED}mYou can't select multiple options if yout want to quit.${RESET}"
-			quit_selected=0
-		fi
 	}
 
-	print_menu
+	draw
 	stty -icanon -echo
 	while IFS="" read -r -s -n 1 c; do
 		case $c in
 		"A")
-			SELECTED=$(((SELECTED - 1 + len) % len))
+			selected=$(((selected - 1 + len) % len))
 			;;
 		"B")
-			SELECTED=$(((SELECTED + 1) % len))
+			selected=$(((selected + 1) % len))
 			;;
 		" ")
 			#? if selected was already selected remove it, else add it
-			if [[ " ${SELECTED_OPTIONS[*]} " =~ " $SELECTED " ]]; then
-				SELECTED_OPTIONS=("${SELECTED_OPTIONS[@]/$SELECTED/}")
+			if [[ " ${SELECTED_OPTIONS[*]} " =~ " $selected " ]]; then
+				local new_list=()
+				for idx in "${SELECTED_OPTIONS[@]}"; do
+					[[ $idx -ne $selected ]] && new_list+=("$idx")
+				done
+				SELECTED_OPTIONS=("${new_list[@]}")
 			else
-				SELECTED_OPTIONS+=($SELECTED)
+				SELECTED_OPTIONS+=("$selected")
 			fi
 			;;
 		"")
-			if ((SELECTED == len - 1)); then
-				if is_contains_others "$SELECTED" SELECTED_OPTIONS[@]; then
-					quit_selected=1
-				else
-					break
-				fi
-			else
-				break
-			fi
+			break
 			;;
 		esac
-		print_menu
+		draw
 	done
 	stty sane
-
-	echo "${SELECTED_OPTIONS[@]}"
 }
 
-handle_error() {
-	local message="$1"
 
-	echo -e "$RESET$ESC[$BD;91mError:$ESC[22m ${message}${RESET}" >&2
-	exit 1
-}
+# Confirm choices
+confirm_choices() {
+	local opts=("$@") choice
 
-handle_git_clone() {
-	local repo="$1"
-	local path="$2"
-	local name="$3"
-
-	echo -e "$ESC[0;${CYAN}mCloning $name...$ESC[$IT;${BLACK}m"
-	git clone $repo $path || handle_error "Failed to clone $name repository."
-	echo -e "$ESC[0;${YELLOW}mCleaning repository...${RESET}"
-}
-
-delete_if_empty() {
-	local dir="$1"
-
-	if [ -d "$dir" ] && [ -z "$(ls -A "$dir")" ]; then
-		rmdir "$dir"
-	fi
-}
-
-# function ()
-# verifier si un dossier include existe dans libft (le dossier courant)
-# si il n'existe ne pas
-#		le creer et deplacer tout les fichiers .h dedans
-# sinon ne rien faire
-check_incldir() {
-	local dir="$1"
-
-	if [[ -z "$dir" ]]; then
-		dir="."
-	fi
-	if [ ! -d "include" ]; then
-		mkdir "include" || handle_error "Failed to create include dir in $(pwd)"
-	fi
-	for file in $dir/*.h; do
-		if [[ -f "$file" ]]; then
-			mv "$file" "include/" || handle_error "Failed to move header file of $(pwd)/$dir"
-		fi
-	done
-}
-
-# renommer le dossier actuel (libft) en plibft
-create_plibft() {
-	local new_libname="$1"
-
-	echo -e "$ESC[$BD;${MAGENTA}mThe structure of libft folder is about to change.${RESET}"
-
-	mkdir "../$new_libname" || handle_error "Failed to create $new_libname folder."
-	mkdir "../$new_libname/libft" || handle_error "Failed to create $new_libname/libft folder."
-	for item in *; do
-		if [[ "$item" != "$(basename "$0")" ]]; then
-			mv "$item" "../$new_libname/libft/" || handle_error "Failed to move $item to $new_libname/libft."
-		fi
-	done
-	cd "../$new_libname"
-}
-
-# creer un dossier `libft` (dans plibft)
-# deplacer toutes les fichiers du dossier courant dans le dossier lifbt (sauf lui meme et features.sh (ce script))
-# cloner dans /tmp/.libft_features/ft_printf
-# deplacer le dossier src et le fichier Makefile depuis le dossier du repos vers le dossier courant
-# renommer le dossier src en ftprintfs_src
-# modifier SRC_DIR et OBJ_DIR dans le Makefile
-# deplacer le dossier libft/include dans le dossier courant
-# modifier 'INCL_DIR = ' dans libft/Makefile, remplacer 'include' par ''../include'
-# deplacer tout les .h dans le dossier include
-# modifier 'INCL_DIR = $(LIBFT)' dans Makefile par 'INCL_DIR = include'
-# afficher en magenta que le nom de la lib (.a et dossier) a changé en plibft
-add_ftprintfs() {
-	local tmp_dir="/tmp/.libft_features/ft_printf"
-	local src="ftprintf_src"
-
-	create_plibft libftp
-	mkdir -p $tmp_dir
-	handle_git_clone "$FT_PRINTF_GIT" "$tmp_dir" "ft_printf"
-	mv "$tmp_dir/src" "./$src" || handle_error "Failed to move printf srcs"
-	mv "$tmp_dir/Makefile" ./ || handle_error "Failed to move printf Makefile"
-	rm -rf "$tmp_dir" || handle_error "Failed to delete temp directory"
-
-	#? Edit SRC and OBJ DIR name for ftprintf
-	sed -i "s|^SRC_DIR *= *src/$|SRC_DIR = $src/|" Makefile || handle_error "Failed to update SRC_DIR"
-	sed -i 's|^OBJ_DIR *= *build/$|OBJ_DIR = ftprintf_obj/|' Makefile || handle_error "Failed to update OBJ_DIR"
-
-	#? Move .h files and update INCL_DIR (for both libft and printf)
-	if [ -d "libft/include" ]; then
-		mv libft/include ./ || handle_error "Failed to move libft/include"
-		sed -i '/^INCL_DIR *= *include/ s|include| ../include|' libft/Makefile || handle_error "Failed to update INCL_DIR in libft/Makefile"
-	else
-		check_incldir libft
-		sed -i '/^INCL_DIR *=/ s|$| ../include|' libft/Makefile || handle_error "Failed to update INCL_DIR in libft/Makefile"
-	fi
-	check_incldir "$src"
-	sed -i '/^INCL_DIR *= *$(LIBFT)/ s|$(LIBFT)|include|' Makefile || handle_error "Failed to update INCL_DIR"
-
-	#? Change lib name in Makefile of curr project
-	local makefile="../Makefile"
-	sed_and_warn() {
-		local var="$1"
-		local value="$2"
-		local expected="${value}p"
-
-		if ! sed -i "/^$var *=/ s|$value|$expected|" "$makefile"; then
-			echo -e "$ESC[$BD;${YELLOW}mWarning$ESC[0;${YELLOW}m failed to update $ESC[$BD;${YELLOW}m${var}$ESC[0;${YELLOW}m to $ESC[$UD;${YELLOW}m${expected}$ESC[0;${YELLOW}m in the Makefile."
-			echo -e "$ESC[0;${MAGENTA}mPlease update it manually.$RESET"
-			return 1
-		fi
-		return 0
-	}
-	if sed_and_warn LIBFT libft; then
-		sed_and_warn LIB_FILES ft
-	fi
-
-	echo -e "$ESC[0;${GREEN}mFt_printf added successfully !${RESET}"
-	echo -e "$ESC[$BD;${MAGENTA}mThe name of libft folder and archive is now libftp.${RESET}"
-}
-
-# cloner dans get_next_line
-# supprimer tout les fichiers, dans le dossier get_next_line
-#	sauf tout ceux dont le nom commence par get_next_line, (ex: get_next_line.c, get_next_line_utils.c, get_next_line.h)
-#	meme les cachés genre `.git` et `.gitignore`
-# deplacer les fichiers .h (du dossier get_next_line) dans le dossier include
-# ajouter tout les fichiers restant dans le dossier get_next_line dans le Makefile, a la variable 'C_FILES'
-add_gnl() {
-	handle_git_clone "$GNL_GIT" "get_next_line" "get_next_line"
-
-	find get_next_line -type f ! -name "get_next_line*" -delete || handle_error "Failed to clean repo"
-	rm -rf get_next_line/.git
-	check_incldir
-	check_incldir get_next_line
-
-	sed -i '/^INCL_DIR =/ s/$/ include/' Makefile 
-	for file in get_next_line/*c; do
-		if [[ -f "$file" ]]; then
-			sed -i "/^C_FILES =/a \ $(printf '\t\t\t')$file \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
-		fi
-	done
-
-	sed -i '/^# include "libft_internal.h"/a \# include "get_next_line.h"' include/libft.h || handle_error "Failed to include gnl header"
-	echo -e "$ESC[0;${GREEN}mGnl added successfully !${RESET}"
-}
-
-# cloner dans un tmp dir
-# créer 'containers' et y mettre tout les fichiers sources
-# créer un dossier include dans libft et y ajouter les .h
-# ajouter les .h du tmp_dir/include aux include de libft.h et dans le dossier include
-# ajouter le dossier include comme INCL_DIR dans le Makefile libft
-# ajouter les fichiers .c (des containers) au Makefile
-add_containers() {
-	local tmp_dir="/tmp/.libft_features/containers"
-
-	mkdir -p $tmp_dir
-	handle_git_clone "$CONTAINERS_GIT" "$tmp_dir" "libft_containers"
-
-	mkdir containers || handle_error "Failed to create containers directory"
-	rm -rf ./$tmp_dir/src/libft_utils
-	mv $tmp_dir/src/* ./containers || handle_error "Failed to move containers srcs"
-
-	check_incldir
-	for hfile in $tmp_dir/include/*h; do
-		if [[ -f "$hfile" ]]; then
-			sed -i "/^# include \"libft_internal.h\"/a \# include \"$(basename $hfile)\"" include/libft.h || handle_error "Failed to include gnl header"
-		fi
-	done
-	check_incldir "$tmp_dir/include"
-
-	sed -i '/^INCL_DIR =/ s/$/ include/' Makefile
-	for file in containers/*c; do
-		if [[ -f "$file" ]]; then
-			sed -i "/^C_FILES =/a \ $(printf '\t\t\t')$file \\\\" Makefile || handle_error "Failed to update 'C_FILES' in Makefile."
-		fi
-	done
-	rm -rf $tmp_dir
-	echo -e "$ESC[0;${GREEN}mContainers added successfully !${RESET}"
-}
-
-navigate_to_libft() {
-	if [[ $(basename "$PWD") == "libft" ]]; then
-		echo "Already in the libft directory."
-		return
-	fi
-
-	LIBFT_PATH=$(find . -type d -name "libft" -print -quit)
-
-	if [[ -n "$LIBFT_PATH" ]]; then
-		cd "$LIBFT_PATH" || handle_error "Failed to navigate to $LIBFT_PATH."
-	else
-		handle_error "'libft' directory not found."
-	fi
-}
-
-display_and_confirm() {
-	local options=("$@")
-
-	print_rectangle() {
-		local elements=("$@")
+	draw_rectangle() {
+		local options=("$@")
 		local width=0
 
-		#? Find the max width for rectangle
-		for selected in "${elements[@]}"; do
+		for selected in "${SELECTED_OPTIONS[@]}"; do
 			[[ ${#options[selected]} -gt $width ]] && width=${#options[selected]}
 		done
 		width=$((width + 4))
 
 		echo ""
 		echo "┌$(printf '─%.0s' $(seq 1 $width))┐"
-
-		for selected in "${elements[@]}"; do
+		for selected in "${SELECTED_OPTIONS[@]}"; do
 			if [[ -n $selected ]]; then
 				printf "│ %-*s │\n" $((width - 2)) "${options[selected]}"
 			fi
 		done
-
 		echo "└$(printf '─%.0s' $(seq 1 $width))┘"
 		echo ""
 	}
-	print_rectangle "${SELECTED_OPTIONS[@]}"
+	draw_rectangle "${opts[@]}"
 
-	#? Ask confirmation
 	while true; do
-		echo -e "$ESC[${YELLOW}mConfirm your selection ? (Y/n):${RESET}"
-		read -r -p ' > ' confirmation
-		confirmation=${confirmation:-y}
-		case $confirmation in
-		[Yy]*) return 0 ;;
-		[Nn]*)
-			echo -e "$ESC[${RED}mOperation canceled.${RESET}"
-			return 1
-			;;
-		*) echo -e "$ESC[${MAGENTA}mPlease answer 'y' or 'n'.${RESET}" ;;
+		printf "\n$ESC[${YELLOW}mConfirm? (Y/n):$RESET "
+		read -r choice
+		choice=${choice:-y}
+		case "$choice" in
+			[Yy]*) return 0 ;;
+			[Nn]*) printf "$ESC[${RED}mCanceled.$RESET\n"; return 1 ;;
+			*) printf "$ESC[${MAGENTA}mPlease answer 'y' or 'n'.$RESET\n" ;;
 		esac
 	done
 }
 
-#* Main script logic
+# Move to libft directory if needed
+navigate_to_libft() {
+	[[ $(basename "$PWD") == "libft" ]] && return
+	local found
+	found=$(find . -type d -name libft -print -quit)
+	[[ -z "$found" ]] && handle_error "libft folder not found"
+	cd "$found" || handle_error "Failed to cd into libft"
+}
 
-command -v git >/dev/null 2>&1 || handle_error "git is not installed."
-command -v sed >/dev/null 2>&1 || handle_error "sed is not installed."
+# Main
+main() {
+	command -v git >/dev/null || handle_error "git not installed"
+	command -v sed >/dev/null || handle_error "sed not installed"
+	mkdir -p $TMP_DIR
 
-options=("Add libft_containers" "Add ft_printf" "Add get_next_line" "Quit")
+	local opts=("Add libft_containers" "Add ft_printf" "Add get_next_line")
+	navigate_to_libft
+	MENU "${opts[@]}"
+	clear
 
-navigate_to_libft
-MENU "${options[@]}"
-clear
-mkdir /tmp/.libft_features
+	[[ ${#SELECTED_OPTIONS[@]} -eq 0 ]] && {
+		printf "$ESC[${RED}mNo options selected. Exiting.$RESET\n"
+		exit 0
+	}
+	confirm_choices "${opts[@]}" || exit 0
 
-if display_and_confirm "${options[@]}"; then
-	has_add_ft_printf=false
-
-	for i in "${SELECTED_OPTIONS[@]}"; do
-		case $i in
-		0) add_containers ;;
-		1) has_add_ft_printf=true ;;
-		2) add_gnl ;;
+	local add_printf=false
+	for idx in "${SELECTED_OPTIONS[@]}"; do
+		case $idx in
+			0) add_containers ;;
+			1) add_printf=true ;;
+			2) add_gnl ;;
 		esac
 	done
-	if $has_add_ft_printf; then
-		add_ftprintfs
-	fi
-else
-	echo -e "$ESC[0;${CYAN}mNo actions were performed.${RESET}"
-	exit 0
-fi
+	$add_printf && add_ftprintfs
 
-echo ""
-echo -e "$ESC[$BD;${GREEN}mScript completed !${RESET}"
-echo -e "$ESC[0;${MAGENTA}mPlease run '$ESC[${BD}mnorminette$ESC[22m' to verify compliance.${RESET}"
+	printf "\n$ESC[$BD;${GREEN}mScript completed!$RESET\n"
+	printf "$ESC[0;${MAGENTA}mRun 'norminette' to verify.$RESET\n"
 
-cd .. || handle_error "Failed to navigate back to parent directory."
-echo -en "$ESC[0;${RED}mDelete the script itself? (Y/n):${RESET}"
-read -r -p ' > ' confirm
-confirm=${confirm:-y}
-[[ $confirm =~ ^[Yy]$ ]] && rm -- "$0"
-delete_if_empty libft
+	cd .. || handle_error "Could not return to parent dir"
+	printf "$ESC[0;${RED}mDelete script? (Y/n):$RESET "
+	read -r -p ' > ' confirm
+	[[ ${confirm:-y} =~ ^[Yy]$ ]] && rm -- "$0"
+	[[ -d libft && -z $(ls -A libft) ]] && rmdir libft
+	rm -rf $TMP_DIR
+}
+
+main "$@"

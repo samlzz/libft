@@ -198,6 +198,7 @@ add_ftprintfs() {
 	local src="ftprintf_src"
 
 	create_plibft libftp
+	mkdir -p $tmp_dir
 	handle_git_clone "$FT_PRINTF_GIT" "$tmp_dir" "ft_printf"
 	mv "$tmp_dir/src" "./$src" || handle_error "Failed to move printf srcs"
 	mv "$tmp_dir/Makefile" ./ || handle_error "Failed to move printf Makefile"
@@ -272,8 +273,9 @@ add_gnl() {
 # ajouter le dossier include comme INCL_DIR dans le Makefile libft
 # ajouter les fichiers .c (des containers) au Makefile
 add_containers() {
-	local tmp_dir="/tmp/.libft_features/ft_printf"
+	local tmp_dir="/tmp/.libft_features/containers"
 
+	mkdir -p $tmp_dir
 	handle_git_clone "$CONTAINERS_GIT" "$tmp_dir" "libft_containers"
 
 	mkdir containers || handle_error "Failed to create containers directory"
@@ -366,6 +368,7 @@ options=("Add libft_containers" "Add ft_printf" "Add get_next_line" "Quit")
 navigate_to_libft
 MENU "${options[@]}"
 clear
+mkdir /tmp/.libft_features
 
 if display_and_confirm "${options[@]}"; then
 	has_add_ft_printf=false

@@ -63,7 +63,20 @@ inject_headers_to_libft_h() {
 	done
 }
 
-# Create libftp structure
+fill_incld_dir() {
+	local incld_line incld_val new_incld_value
+
+	incld_line=$(grep '^INCL_DIR *=' "$libname/Makefile") || return 1
+	incld_value=$(echo "$incld_line" | sed -E 's/INCL_DIR *= *//')
+	new_incld_value=""
+	for dir in $incld_value; do
+		new_incld_value+="$libname/$dir "
+	done
+	[[ -d include ]] && new_incld_value+="include"
+	sed -i "s|^INCL_DIR *=.*|INCL_DIR = $new_incld_value|" Makefile
+}
+
+# Create highlib structure
 setup_libftp_structure() {
 	local newlib="$1"
 	libname="$(basename $(pwd))"
@@ -92,13 +105,7 @@ add_ftprintfs() {
 	move_headers_to_include "$src"
 	sed -i "s|^LIBFT *=.*|LIBFT = $libname|" Makefile
 	sed -i "s|^LIB_FILES *=.*|LIB_FILES = ${libname#lib}|" Makefile
-	local incld_list
-	if [[ -d "./$libname/include" ]]; then
-		incld_list="include \$(LIBFT)/include"
-	else
-		incld_list="include \$(LIBFT)"
-	fi
-	sed -i "s|^INCL_DIR *=.*|INCL_DIR = $incld_list|" Makefile
+	fill_incld_dir
 
 	sed -i 's|^LIBFT *=.*|LIBFT = libftp|' ../Makefile 2>/dev/null || true
 	sed -i 's|^LIB_FILES *=.*|LIB_FILES = ftp|' ../Makefile 2>/dev/null || true
@@ -138,13 +145,7 @@ add_containers() {
 
 	sed -i "s|^LIBFT *=.*|LIBFT = $libname|" Makefile
 	sed -i "s|^LIB_FILES *=.*|LIB_FILES = ${libname#lib}|" Makefile
-	local incld_list
-	if [[ -d "./$libname/include" ]]; then
-		incld_list="include \$(LIBFT)/include"
-	else
-		incld_list="include \$(LIBFT)"
-	fi
-	sed -i "s|^INCL_DIR *=.*|INCL_DIR = $incld_list|" Makefile
+	fill_incld_dir
 
 	sed -i "s|^SRC_DIR *=.*|SRC_DIR = $src/|" Makefile
 	sed -i "s|^OBJ_DIR *=.*|OBJ_DIR = containers_obj/|" Makefile

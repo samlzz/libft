@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/05 19:03:59 by sliziard          #+#    #+#              #
-#    Updated: 2025/04/08 12:59:38 by sliziard         ###   ########.fr        #
+#    Updated: 2025/04/09 18:17:43 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ NAME =		libft.a
 #TODO: Folders name must end with '\'
 SRC_DIR =
 OBJ_DIR =
-INCL_DIR =  include
+INCL_DIR =
 
 CC = gcc
 CFLAGS := -Wall -Wextra -Werror

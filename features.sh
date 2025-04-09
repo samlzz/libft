@@ -92,7 +92,13 @@ add_ftprintfs() {
 	move_headers_to_include "$src"
 	sed -i "s|^LIBFT *=.*|LIBFT = $libname|" Makefile
 	sed -i "s|^LIB_FILES *=.*|LIB_FILES = ${libname#lib}|" Makefile
-	sed -i "s|^INCL_DIR *=.*|INCL_DIR = include \$(LIBFT)|" Makefile
+	local incld_list
+	if [[ -d "./$libname/include" ]]; then
+		incld_list="include \$(LIBFT)/include"
+	else
+		incld_list="include \$(LIBFT)"
+	fi
+	sed -i "s|^INCL_DIR *=.*|INCL_DIR = $incld_list|" Makefile
 
 	sed -i 's|^LIBFT *=.*|LIBFT = libftp|' ../Makefile 2>/dev/null || true
 	sed -i 's|^LIB_FILES *=.*|LIB_FILES = ftp|' ../Makefile 2>/dev/null || true
@@ -113,7 +119,7 @@ add_gnl() {
 	move_headers_to_include "$dir"
 
 	append_cfiles_to_makefile "$dir"
-	sed -i '/^INCL_DIR =/ s/$/ include/' Makefile
+	sed -i "s|^INCL_DIR *=.*|INCL_DIR = include|" Makefile
 
 	printf "$ESC[0;${GREEN}mGNL added successfully!$RESET\n"
 }
@@ -132,6 +138,13 @@ add_containers() {
 
 	sed -i "s|^LIBFT *=.*|LIBFT = $libname|" Makefile
 	sed -i "s|^LIB_FILES *=.*|LIB_FILES = ${libname#lib}|" Makefile
+	local incld_list
+	if [[ -d "./$libname/include" ]]; then
+		incld_list="include \$(LIBFT)/include"
+	else
+		incld_list="include \$(LIBFT)"
+	fi
+	sed -i "s|^INCL_DIR *=.*|INCL_DIR = $incld_list|" Makefile
 
 	sed -i "s|^SRC_DIR *=.*|SRC_DIR = $src/|" Makefile
 	sed -i "s|^OBJ_DIR *=.*|OBJ_DIR = containers_obj/|" Makefile

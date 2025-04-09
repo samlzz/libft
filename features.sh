@@ -8,12 +8,20 @@ CONTAINER_GIT="git@github.com:samlzz/libft_containers.git"
 TMP_DIR="/tmp/.libft_features"
 
 ESC='\033'
-BD=1; IT=3; UD=4
-BLACK=30; RED=31; GREEN=32; YELLOW=33; BLUE=34; MAGENTA=35; CYAN=36
+BD=1
+IT=3
+UD=4
+BLACK=30
+RED=31
+GREEN=32
+YELLOW=33
+BLUE=34
+MAGENTA=35
+CYAN=36
 RESET="${ESC}[0m"
 
-BG() { echo $(( $1 + 10 )); }
-BRIGHT() { echo $(( $1 + 60 )); }
+BG() { echo $(($1 + 10)); }
+BRIGHT() { echo $(($1 + 60)); }
 
 # Utility: Print error and exit
 handle_error() {
@@ -50,17 +58,19 @@ inject_headers_to_libft_h() {
 	for hfile in "$dir"/*.h; do
 		local base
 		base=$(basename "$hfile")
-		grep -qxF "# include \"$base\"" include/libft.h || \
+		grep -qxF "# include \"$base\"" include/libft.h ||
 			sed -i "/^# include \"libft_internal.h\"/a \# include \"$base\"" include/libft.h
 	done
 }
 
 # Create libftp structure
 setup_libftp_structure() {
-	local newlib="libftp"
-	mkdir -p "../$newlib/libft" || handle_error "Failed to create $newlib/libft"
+	local newlib="$1"
+	libname="$(basename $(pwd))"
+
+	mkdir -p "../$newlib/$libname" || handle_error "Failed to create $newlib/$libname"
 	for item in *; do
-		[[ "$item" != "$(basename "$0")" ]] && mv "$item" "../$newlib/libft/"
+		[[ "$item" != "$(basename "$0")" ]] && mv "$item" "../$newlib/$libname/"
 	done
 	cd "../$newlib" || handle_error "Could not cd to $newlib"
 }
@@ -70,7 +80,7 @@ add_ftprintfs() {
 	local tmp="/tmp/.libft_features/ft_printf"
 	local src="ftprintf_src"
 
-	setup_libftp_structure
+	setup_libftp_structure "libftp"
 	clone_repo "$FT_PRINTF_GIT" "$tmp" "ft_printf"
 	mv "$tmp/src" "$src"
 	mv "$tmp/Makefile" .
@@ -79,10 +89,10 @@ add_ftprintfs() {
 	sed -i "s|^SRC_DIR *=.*|SRC_DIR = $src/|" Makefile
 	sed -i "s|^OBJ_DIR *=.*|OBJ_DIR = ftprintf_obj/|" Makefile
 
-	[[ -d libft/include ]] && mv libft/include . || move_headers_to_include libft
-	sed -i "s|^INCL_DIR *=.*|INCL_DIR = ../include|" libft/Makefile
 	move_headers_to_include "$src"
-	sed -i "s|^INCL_DIR *=.*|INCL_DIR = include|" Makefile
+	sed -i "s|^LIBFT *=.*|LIBFT = $libname|" Makefile
+	sed -i "s|^LIB_FILES *=.*|LIB_FILES = ${libname#lib}|" Makefile
+	sed -i "s|^INCL_DIR *=.*|INCL_DIR = include \$(LIBFT)|" Makefile
 
 	sed -i 's|^LIBFT *=.*|LIBFT = libftp|' ../Makefile 2>/dev/null || true
 	sed -i 's|^LIB_FILES *=.*|LIB_FILES = ftp|' ../Makefile 2>/dev/null || true
@@ -97,30 +107,38 @@ add_gnl() {
 	clone_repo "$GNL_GIT" "$dir" "get_next_line"
 	find "$dir" -type f ! -name "get_next_line*" -delete
 	rm -rf "$dir/.git"
+
 	inject_headers_to_libft_h "$dir"
+	move_headers_to_include .
 	move_headers_to_include "$dir"
+
 	append_cfiles_to_makefile "$dir"
 	sed -i '/^INCL_DIR =/ s/$/ include/' Makefile
+
 	printf "$ESC[0;${GREEN}mGNL added successfully!$RESET\n"
 }
 
 # Add containers
 add_containers() {
 	local tmp="/tmp/.libft_features/containers"
-	local dst="containers"
+	local src="containers_src"
 
-	clone_repo "$CONTAINER_GIT" "$tmp" "libft_containers"
-	rm -rf "$tmp/src/libft_utils"
+	setup_libftp_structure "libftc"
+	clone_repo "$CONTAINER_GIT" "$tmp" 'libft_containers'
+	mv "$tmp/src" "$src"
+	mv "$tmp/include" 'include'
+	mv "$tmp/Makefile" .
+	rm -rf $tmp
 
-	move_headers_to_include .
-	inject_headers_to_libft_h "$tmp/include"
-	move_headers_to_include "$tmp/include"
+	sed -i "s|^LIBFT *=.*|LIBFT = $libname|" Makefile
+	sed -i "s|^LIB_FILES *=.*|LIB_FILES = ${libname#lib}|" Makefile
 
-	mkdir -p "$dst"
-	mv "$tmp/src"/* "$dst"
-	rm -rf "$tmp"
-	append_cfiles_to_makefile "$dst"
-	sed -i '/^INCL_DIR =/ s/$/ include/' Makefile
+	sed -i "s|^SRC_DIR *=.*|SRC_DIR = $src/|" Makefile
+	sed -i "s|^OBJ_DIR *=.*|OBJ_DIR = containers_obj/|" Makefile
+
+	sed -i 's|^LIBFT *=.*|LIBFT = libftc|' ../Makefile 2>/dev/null || true
+	sed -i 's|^LIB_FILES *=.*|LIB_FILES = ftc|' ../Makefile 2>/dev/null || true
+
 	printf "$ESC[0;${GREEN}mContainers added successfully!$RESET\n"
 }
 
@@ -179,7 +197,6 @@ MENU() {
 	stty sane
 }
 
-
 # Confirm choices
 confirm_choices() {
 	local opts=("$@") choice
@@ -210,9 +227,12 @@ confirm_choices() {
 		read -r choice
 		choice=${choice:-y}
 		case "$choice" in
-			[Yy]*) return 0 ;;
-			[Nn]*) printf "$ESC[${RED}mCanceled.$RESET\n"; return 1 ;;
-			*) printf "$ESC[${MAGENTA}mPlease answer 'y' or 'n'.$RESET\n" ;;
+		[Yy]*) return 0 ;;
+		[Nn]*)
+			printf "$ESC[${RED}mCanceled.$RESET\n"
+			return 1
+			;;
+		*) printf "$ESC[${MAGENTA}mPlease answer 'y' or 'n'.$RESET\n" ;;
 		esac
 	done
 }
@@ -243,15 +263,16 @@ main() {
 	}
 	confirm_choices "${opts[@]}" || exit 0
 
-	local add_printf=false
+	local add_libft_p=false add_libft_c=false
 	for idx in "${SELECTED_OPTIONS[@]}"; do
 		case $idx in
-			0) add_containers ;;
-			1) add_printf=true ;;
-			2) add_gnl ;;
+		0) add_libft_c=true ;;
+		1) add_libft_p=true ;;
+		2) add_gnl ;;
 		esac
 	done
-	$add_printf && add_ftprintfs
+	$add_libft_c && add_containers
+	$add_libft_p && add_ftprintfs
 
 	printf "\n$ESC[$BD;${GREEN}mScript completed!$RESET\n"
 	printf "$ESC[0;${MAGENTA}mRun 'norminette' to verify.$RESET\n"

@@ -70,8 +70,9 @@ fill_incld_dir() {
 	incld_value=$(echo "$incld_line" | sed -E 's/INCL_DIR *= *//')
 	new_incld_value=""
 	for dir in $incld_value; do
-		new_incld_value+="$libname/$dir "
+		new_incld_value+="\$(LIBFT)/$dir "
 	done
+	[[ -z $new_incld_value ]] && new_incld_value+='$(LIBFT) '
 	[[ -d include ]] && new_incld_value+="include"
 	sed -i "s|^INCL_DIR *=.*|INCL_DIR = $new_incld_value|" Makefile
 }

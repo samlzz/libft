@@ -295,7 +295,9 @@ main() {
 	printf "$ESC[0;${RED}mDelete script? (Y/n):$RESET "
 	read -r -p ' > ' confirm
 	[[ ${confirm:-y} =~ ^[Yy]$ ]] && rm -- "$0"
-	[[ -d libft && -z $(ls -A libft) ]] && rmdir libft
+	for dir in ./*; do
+		[[ -d $dir && -z $(ls -A $dir) ]] && rmdir $dir
+	done
 	rm -rf $TMP_DIR
 }
 

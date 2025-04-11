@@ -6,16 +6,12 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:54:22 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/11 13:18:07 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/11 14:39:46 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
 # define LIBFT_H
-
-# ifdef LIBFT_INTERNAL_H
-#  warning "Check your import, 'libft_internal.h' was already included."
-# endif
 
 # include <stddef.h>
 # include <stdbool.h>

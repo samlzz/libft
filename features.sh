@@ -55,6 +55,7 @@ append_cfiles_to_makefile() {
 # Utility: Inject include to libft.h
 inject_headers_to_libft_h() {
 	local dir="$1"
+	local is_full_path/
 	for hfile in "$dir"/*.h; do
 		local base
 		base=$(basename "$hfile")
@@ -68,13 +69,39 @@ fill_incld_dir() {
 
 	incld_line=$(grep '^INCL_DIR *=' "$libname/Makefile") || return 1
 	incld_value=$(echo "$incld_line" | sed -E 's/INCL_DIR *= *//')
-	new_incld_value=""
+	new_incld_value='$(LIBFT) '
 	for dir in $incld_value; do
-		new_incld_value+="\$(LIBFT)/$dir "
+		new_incld_value+="$libname/$dir "
 	done
-	[[ -z $new_incld_value ]] && new_incld_value+='$(LIBFT) '
 	[[ -d include ]] && new_incld_value+="include"
 	sed -i "s|^INCL_DIR *=.*|INCL_DIR = $new_incld_value|" Makefile
+}
+fill_incld_dir() {
+	local incld_line incld_val libft_val
+	local new_val new_incld_val
+	local makefile="$libname/Makefile"
+
+	incld_line=$(grep '^INCL_DIR *=' "$libname/Makefile") || return 1
+	incld_val=$(sed -E 's/^INCL_DIR *= *//' <<<"$incld_line")
+
+	#? Si $(LIBFT) présent → récupérer LIBFT
+	if grep -q '\$\((LIBFT)\)' <<<"$incld_val"; then
+		libft_val=$(grep '^LIBFT *= *' "$makefile" | sed -E 's/^LIBFT *= *//') || return 1
+	fi
+
+	new_incld_val='$(LIBFT) '
+	for dir in $incld_val; do
+		if [[ $dir == *'$(LIBFT)'* ]]; then
+			# Supprimer $(LIBFT) et le remplacer par sa valeur réelle
+			new_val=${dir//'$(LIBFT)'/$libft_val}
+		else
+			new_val=$dir
+		fi
+		new_incld_val+="$libname/$new_val "
+	done
+
+	[[ -d include ]] && new_incld_val+="include"
+	sed -i "s|^INCL_DIR *=.*|INCL_DIR = $new_incld_val|" Makefile
 }
 
 # Create highlib structure
@@ -123,11 +150,8 @@ add_gnl() {
 	rm -rf "$dir/.git"
 
 	inject_headers_to_libft_h "$dir"
-	move_headers_to_include .
-	move_headers_to_include "$dir"
-
+	sed -i "s|^INCL_DIR *=.*|INCL_DIR = $dir|" Makefile
 	append_cfiles_to_makefile "$dir"
-	sed -i "s|^INCL_DIR *=.*|INCL_DIR = include|" Makefile
 
 	printf "$ESC[0;${GREEN}mGNL added successfully!$RESET\n"
 }

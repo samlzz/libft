@@ -6,11 +6,12 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 14:44:45 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/08 22:24:57 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/11 13:19:58 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "private/libft_internal.h"
 #include <limits.h>
 #include <stdlib.h>
 

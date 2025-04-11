@@ -6,7 +6,7 @@
 #    By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/05 19:03:59 by sliziard          #+#    #+#              #
-#    Updated: 2025/04/09 18:17:43 by sliziard         ###   ########.fr        #
+#    Updated: 2025/04/11 13:20:52 by sliziard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,6 @@ MD = mkdir -p
 AR = ar rcs
 
 C_FILES =	ft_char.c			\
-			ft_convert_utils.c	\
 			ft_convert.c		\
 			ft_convert_base.c	\
 			ft_is.c 			\
@@ -36,7 +35,8 @@ C_FILES =	ft_char.c			\
 			ft_str_alloc.c		\
 			ft_str_iter.c		\
 			ft_str.c			\
-			ft_utils.c
+			ft_utils.c			\
+			private/ft_convert_utils.c	\
 			
 #* Colors
 

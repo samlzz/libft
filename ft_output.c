@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 15:26:27 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/08 22:08:11 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:43:30 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,14 @@ void	ft_putchar_fd(char c, int32_t fd)
 	write(fd, &c, 1);
 }
 
-void	ft_putstr_fd(char *s, int32_t fd)
+void	ft_putstr_fd(const char *s, int32_t fd)
 {
 	if (fd < 0)
 		return ;
 	write(fd, s, ft_strlen(s));
 }
 
-void	ft_putendl_fd(char *s, int32_t fd)
+void	ft_putendl_fd(const char *s, int32_t fd)
 {
 	if (fd < 0)
 		return ;

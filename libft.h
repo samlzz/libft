@@ -6,7 +6,7 @@
 /*   By: sliziard <sliziard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 11:54:22 by sliziard          #+#    #+#             */
-/*   Updated: 2025/04/11 14:39:46 by sliziard         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:43:34 by sliziard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,8 +116,8 @@ char		*ft_ulltoa_base(uint64_t n, char *base)
 
 //* ft_output
 void		ft_putchar_fd(char c, int32_t fd);
-void		ft_putstr_fd(char *s, int32_t fd);
-void		ft_putendl_fd(char *s, int32_t fd);
+void		ft_putstr_fd(const char *s, int32_t fd);
+void		ft_putendl_fd(const char *s, int32_t fd);
 void		ft_putnbr_fd(int32_t n, int32_t fd);
 
 #endif

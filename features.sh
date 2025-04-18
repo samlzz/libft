@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Global Constants
-GNL_GIT="git@github.com:samlzz/get_next_line.git"
-FT_PRINTF_GIT="git@github.com:samlzz/ft_printf.git"
-CONTAINER_GIT="git@github.com:samlzz/libft_containers.git"
+GNL_GIT="https://github.com/samlzz/get_next_line.git"
+FT_PRINTF_GIT="https://github.com/samlzz/ft_printf.git"
+CONTAINER_GIT="https://github.com/samlzz/libft_containers.git"
 
 TMP_DIR="/tmp/.libft_features"
 
